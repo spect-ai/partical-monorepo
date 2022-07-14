@@ -79,9 +79,19 @@ export class Entity {
     );
 
     const EntityMapping = Moralis.Object.extend('EntityMapping');
+    const query = new Moralis.Query(EntityMapping);
+    query.equalTo('entityAddress', entityAddress);
+    const results = await query.find();
+
     const entityMapping = new EntityMapping();
 
     entityMapping.set('entityAddress', entityAddress);
+    entityMapping.set(
+      'encryptedSymmetricKey',
+      results[0].get('encryptedSymmetricKey')
+    );
+    entityMapping.set('url', results[0].get('url'));
+    entityMapping.set('streamId', results[0].get('streamId'));
     entityMapping.set('userAddress', userAddress.toLowerCase());
 
     await entityMapping.save();

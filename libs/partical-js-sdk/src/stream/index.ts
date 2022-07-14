@@ -123,8 +123,8 @@ export class StreamData extends Base {
     const StreamIndexer = Moralis.Object.extend('StreamIndexer');
     const query = new Moralis.Query(StreamIndexer);
     query.equalTo('appId', appId);
-    query.select('appId');
     const results = await query.find();
+    console.log('results', results);
     const streamIds = results.map((result) => result.get('streamId'));
     console.log({ streamIds });
     const ceramic = new CeramicClient('http://localhost:7007');
