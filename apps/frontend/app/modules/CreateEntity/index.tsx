@@ -1,39 +1,45 @@
-import { getContractABI, getContractAddress } from '@partical/contracts';
+import { Entity } from '@partical/partical-js-sdk';
 import { Box, Button, Stack } from 'degen';
-import React from 'react';
-import useContract from '../../services/contract/useContract';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { useMoralis } from 'react-moralis';
 
-export default function Entity() {
-  const { createEntity, updateEntityUri } = useContract({
-    factoryAddress: getContractAddress('4'),
-    factoryABI: getContractABI('factory'),
-    entityABI: getContractABI('entity'),
-  });
+export default function EntityComponent() {
+  const [loading, setLoading] = useState(false);
+  const { user } = useMoralis();
 
   return (
     <Box padding="8">
       <Stack direction="horizontal">
+        <Link href="/createnamespace">
+          <Button variant="secondary">Create Namespace</Button>
+        </Link>
         <Button
+          loading={loading}
           variant="secondary"
           onClick={async () => {
-            const data = await createEntity('');
+            setLoading(true);
+            // const data = await createEntity('');
+            const entitySDK = new Entity.Entity();
+            const data = await entitySDK.initializeEntity(
+              user.get('ethAddress')
+            );
             console.log(data);
+            setLoading(false);
           }}
         >
           Create Entity
         </Button>
-        <Button
-          variant="secondary"
-          onClick={async () => {
-            const data = await updateEntityUri(
-              '0x74B0BEafb7409075793fD876a485E611F778CFce',
-              'https://www.google.com'
-            );
-            console.log(data);
-          }}
-        >
-          Update Entity
-        </Button>
+
+        <Link href="/creategrant">
+          <Button variant="secondary">Create Grant</Button>
+        </Link>
+        <Link href="/exploregrants">
+          <Button variant="secondary">Explore Grants</Button>
+        </Link>
+        <Link href="/viewdata">
+          <Button variant="secondary">View Data</Button>
+        </Link>
       </Stack>
     </Box>
   );
