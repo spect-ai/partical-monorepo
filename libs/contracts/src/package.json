@@ -1,0 +1,13 @@
+{
+  "name": "contracts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "forge test",
+    "build": "forge build"
+  },
+  "dependencies": {
+    "key-did-provider-ed25519": "^2.0.0",
+    "key-did-resolver": "^2.0.5"
+  }
+}

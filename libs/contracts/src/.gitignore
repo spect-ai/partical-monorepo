@@ -1,0 +1,16 @@
+# # Compiler files
+# cache/
+# *
+
+# !out/Factory.sol/Factory.json
+# !out/Entity.sol/Entity.json
+# !*/
+
+# # Ignores development broadcast logs
+# # !/broadcast
+# # /broadcast/*
+# !/broadcast/*/*/run-latest.json
+
+lib/openzeppelin-contracts
+cache/
+broadcast/*/*/run-[0-9]*.json
