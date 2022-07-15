@@ -5,6 +5,7 @@
     "contracts": "libs/contracts",
     "dashboard": "apps/dashboard",
     "dashboard-e2e": "apps/dashboard-e2e",
+    "example-app": "apps/example-app",
     "partical-js-sdk": "libs/partical-js-sdk"
   }
 }
