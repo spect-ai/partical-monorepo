@@ -1,27 +1,27 @@
-import { Box, Heading } from "degen";
-import { motion } from "framer-motion";
-import React from "react";
+import { Box, Heading } from 'degen';
+import { motion } from 'framer-motion';
+import React from 'react';
 
-import styled from "styled-components";
-import Backdrop from "./backdrop";
+import styled from 'styled-components';
+import Backdrop from './backdrop';
 
 const dropIn = {
   hidden: {
-    y: "-100vh",
+    y: '-100vh',
     opacity: 0,
   },
   visible: {
-    y: "0",
+    y: '0',
     opacity: 1,
     transition: {
       duration: 0.1,
-      type: "spring",
+      type: 'spring',
       damping: 25,
       stiffness: 500,
     },
   },
   exit: {
-    y: "100vh",
+    y: '100vh',
     opacity: 0,
   },
 };
@@ -37,7 +37,7 @@ const grow = {
     scale: 1,
     transition: {
       duration: 0.4,
-      type: "spring",
+      type: 'spring',
       damping: 25,
       stiffness: 400,
     },
@@ -70,20 +70,20 @@ type props = {
   title: string;
   handleClose: () => void;
   height?: string;
-  size?: "small" | "medium" | "large";
+  size?: 'small' | 'medium' | 'large';
   zIndex?: number;
 };
 
-const getResponsiveWidth = (size: "small" | "medium" | "large") => {
+const getResponsiveWidth = (size: 'small' | 'medium' | 'large') => {
   switch (size) {
-    case "small":
-      return { xs: "full", md: "128" };
-    case "medium":
-      return { xs: "full", md: "192" };
-    case "large":
-      return { xs: "full", md: "256" };
+    case 'small':
+      return { xs: 'full', md: '128' };
+    case 'medium':
+      return { xs: 'full', md: '192' };
+    case 'large':
+      return { xs: 'full', md: '256' };
     default:
-      return { xs: "full", md: "192" };
+      return { xs: 'full', md: '192' };
   }
 };
 
@@ -92,7 +92,7 @@ function Modal({
   title,
   children,
   height,
-  size = "medium",
+  size = 'medium',
   zIndex,
 }: props) {
   return (
@@ -117,12 +117,12 @@ function Modal({
         >
           <Box
             paddingX={{
-              xs: "4",
-              md: "8",
+              xs: '4',
+              md: '8',
             }}
             paddingY={{
-              xs: "2",
-              md: "5",
+              xs: '2',
+              md: '5',
             }}
           >
             <Heading>{title}</Heading>

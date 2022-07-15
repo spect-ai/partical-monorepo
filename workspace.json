@@ -3,8 +3,8 @@
   "version": 2,
   "projects": {
     "contracts": "libs/contracts",
-    "frontend": "apps/frontend",
-    "frontend-e2e": "apps/frontend-e2e",
+    "dashboard": "apps/dashboard",
+    "dashboard-e2e": "apps/dashboard-e2e",
     "partical-js-sdk": "libs/partical-js-sdk"
   }
 }
