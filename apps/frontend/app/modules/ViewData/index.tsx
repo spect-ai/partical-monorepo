@@ -8,13 +8,14 @@ export default function ViewData() {
   const [myEntity, setMyEntity] = useState<any>();
   const [myAppData, setMyAppData] = useState<any>();
   const [address, setAddress] = useState('');
-  const entity = new Entity.Entity();
 
   useEffect(() => {
     const getMyData = async () => {
-      const myEntity = await entity.getMyEntity(user.get('ethAddress'));
+      const data = await Entity.Entity.getByUser(user.get('ethAddress'));
       console.log(myEntity);
-      const myData = await entity.getMyAppData(myEntity.get('entityAddress'));
+      const myData = await Entity.Entity.getAppData(
+        myEntity.get('entityAddress')
+      );
       console.log({ myData });
       setMyEntity(myEntity);
       setMyAppData(myData);
@@ -68,7 +69,10 @@ export default function ViewData() {
         />
         <Button
           onClick={() => {
-            void entity.giveAccess(myEntity.get('entityAddress'), address);
+            void Entity.Entity.giveAccess(
+              myEntity.get('entityAddress'),
+              address
+            );
           }}
         >
           Give Acesss

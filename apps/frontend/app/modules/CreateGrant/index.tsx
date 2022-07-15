@@ -20,8 +20,7 @@ export default function CreateGrant() {
 
   useEffect(() => {
     const getMyEntity = async () => {
-      const entitySDK = new Entity.Entity();
-      const data = await entitySDK.getMyEntity(user.get('ethAddress'));
+      const data = await Entity.Entity.getByUser(user.get('ethAddress'));
       console.log({ data });
       setEntityAddress(data.get('entityAddress'));
       setEntity(data);

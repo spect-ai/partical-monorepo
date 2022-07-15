@@ -4,6 +4,7 @@ import { storeMetadata } from '.';
 import { EntityABI } from '../constants/abi';
 import { updateEntityUri } from './contract';
 import { authenticateCeramic, createStream } from './stream';
+import Ceramic from '../ceramic';
 
 const client = new LitJsSdk.LitNodeClient();
 const chain = 'rinkeby';
@@ -28,8 +29,6 @@ class Lit {
       }
     | undefined
   > {
-    const ceramic = new CeramicClient('http://localhost:7007');
-
     const accessControlConditions = [
       {
         contractAddress,
@@ -54,15 +53,23 @@ class Lit {
       );
 
       console.log({ symmetricKey });
-      await authenticateCeramic(symmetricKey, ceramic);
-      const streamId = await createStream(
-        {
-          contractAddress,
-          appData: [],
-        },
-        ceramic
-      );
 
+      // const ceramic = new CeramicClient('http://localhost:7007');
+      // await authenticateCeramic(symmetricKey, ceramic);
+      // const streamId = await createStream(
+      //   {
+      //     contractAddress,
+      //     appData: [],
+      //   },
+      //   ceramic
+      // );
+      Ceramic.initialize();
+      await Ceramic.authenticate(symmetricKey);
+      const streamId = await Ceramic.createStream({
+        contractAddress,
+        appData: [],
+      });
+      console.log({ streamId });
       const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
         accessControlConditions,
         symmetricKey,

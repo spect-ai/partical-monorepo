@@ -6,6 +6,6 @@
     "types": [],
     "composite": true
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "src/ceramic"],
   "exclude": ["jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }

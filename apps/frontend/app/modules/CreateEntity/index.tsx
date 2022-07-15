@@ -20,10 +20,7 @@ export default function EntityComponent() {
           onClick={async () => {
             setLoading(true);
             // const data = await createEntity('');
-            const entitySDK = new Entity.Entity();
-            const data = await entitySDK.initializeEntity(
-              user.get('ethAddress')
-            );
+            const data = await Entity.Entity.initialize(user.get('ethAddress'));
             console.log(data);
             setLoading(false);
           }}

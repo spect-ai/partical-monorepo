@@ -5,43 +5,101 @@ import litprotocol from '../utils/litprotocol';
 import Moralis from 'moralis';
 import { getMultipleStreams, getStream, updateStream } from '../utils/stream';
 import { CeramicClient } from '@ceramicnetwork/http-client';
+import OnChainEntity from '../contract/OnChainEntity';
+import OnChainEntityFactory from '../contract/OnChainEntityFactory';
+import Lit from '../lit';
+import Ceramic from '../ceramic';
+import { storeMetadata } from '../utils';
+import LitJsSdk from 'lit-js-sdk';
 
+const standardContractType = 'ERC1155';
+const chain = 'rinkeby';
 export class Entity {
   constructor() {
-    const serverUrl = 'https://e6ss72rsmosx.usemoralis.com:2053/server';
-    const appId = '6F5BP7sxHeCFc3yczy70u0xlF72oS9YQbOygTnoT';
-
-    void Moralis.start({ serverUrl, appId });
+    if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
   }
-  async initializeEntity(userAddress: string) {
+
+  static async addIndex(
+    entityAddress: string,
+    userAddress: string,
+    encryptedSymmetricKey: string,
+    streamId: string,
+    url: string
+  ) {
+    const EntityMapping = Moralis.Object.extend('EntityMapping');
+    const entityMapping = new EntityMapping();
+
+    entityMapping.set('entityAddress', entityAddress);
+    entityMapping.set('userAddress', userAddress.toLowerCase());
+    entityMapping.set('encryptedSymmetricKey', encryptedSymmetricKey);
+    entityMapping.set('streamId', streamId);
+    entityMapping.set('url', url);
+
+    return await entityMapping.save();
+  }
+
+  static async initialize(userAddress: string) {
     try {
-      const data = await createEntity('', contractAddress, FactoryABI.abi);
-      console.log({ data });
+      /** TODO: Move this to Partical client */
+      OnChainEntityFactory.initContract();
+      Lit.connect();
+      Ceramic.initialize();
+
+      /** Create entity on chain using factory contract */
+      const data = await OnChainEntity.create('');
       const entityAddress = data.events[1].args.entity;
-      const { encryptedSymmetricKey, streamId, url }: any =
-        await litprotocol.initializeDatastore('encrypt', entityAddress);
-      console.log({ encryptedSymmetricKey, streamId, url });
-      const EntityMapping = Moralis.Object.extend('EntityMapping');
-      const entityMapping = new EntityMapping();
+      OnChainEntity.initContract(entityAddress);
 
-      entityMapping.set('entityAddress', entityAddress);
-      entityMapping.set('userAddress', userAddress.toLowerCase());
-      entityMapping.set('encryptedSymmetricKey', encryptedSymmetricKey);
-      entityMapping.set('streamId', streamId);
-      entityMapping.set('url', url);
+      /** Create symmetric to be used as seed for ceramic key controller */
+      const { encryptedString, symmetricKey }: any =
+        await Lit.checkAndSignAuthMessage('encrypt', entityAddress);
 
-      const res = await entityMapping.save();
+      /** Authenticate using symmetric key and create key did */
+      await Ceramic.authenticate(symmetricKey);
+      const streamId = await Ceramic.createStream({
+        contractAddress,
+        appData: [],
+      });
 
-      console.log({ res });
+      const encryptedKey = await Lit.saveKey(
+        [
+          {
+            contractAddress,
+            standardContractType,
+            chain,
+            method: 'balanceOf',
+            parameters: [':userAddress', '0'],
+            returnValueTest: {
+              comparator: '>',
+              value: '0',
+            },
+          },
+        ],
+        encryptedString
+      );
 
-      return res;
+      /** Update entity's on chain uri with new ipfs uri */
+
+      const url = await storeMetadata(encryptedKey, streamId);
+
+      /** Update entity's on chain uri with new ipfs uri */
+      await OnChainEntity.update(url);
+
+      /** Add index in moralis for entity */
+      return await Entity.addIndex(
+        entityAddress,
+        userAddress,
+        LitJsSdk.uint8arrayToString(encryptedKey, 'base16'),
+        streamId,
+        url
+      );
     } catch (e) {
       console.log({ e });
       return false;
     }
   }
 
-  async getMyEntity(userAddress: string) {
+  static async getByUser(userAddress: string) {
     const EntityMapping = Moralis.Object.extend('EntityMapping');
     const query = new Moralis.Query(EntityMapping);
     console.log({ userAddress });
@@ -50,7 +108,7 @@ export class Entity {
     return results[0];
   }
 
-  async getMyAppData(entityAddress: string) {
+  static async getAppData(entityAddress: string) {
     const EntityMapping = Moralis.Object.extend('EntityMapping');
     const query = new Moralis.Query(EntityMapping);
     query.equalTo('entityAddress', entityAddress);
@@ -71,7 +129,7 @@ export class Entity {
     };
   }
 
-  async giveAccess(entityAddress: string, userAddress: string) {
+  static async giveAccess(entityAddress: string, userAddress: string) {
     const res = await mintAccessToken(
       entityAddress,
       userAddress,
