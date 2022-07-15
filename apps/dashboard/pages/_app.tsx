@@ -17,7 +17,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID as string}
       serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL as string}
     >
-      <ThemeProvider defaultMode="dark" defaultAccent="indigo">
+      <ThemeProvider defaultMode="dark" defaultAccent="foreground">
         <Component {...pageProps} />
       </ThemeProvider>
     </MoralisProvider>

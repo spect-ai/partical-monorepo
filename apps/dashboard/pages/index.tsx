@@ -1,9 +1,9 @@
 import Layout from '../app/common/layout';
-import Entity from '../app/modules/CreateEntity';
+import Landing from '../app/modules/Landing';
 export function Index() {
   return (
     <Layout>
-      <Entity />
+      <Landing />
     </Layout>
   );
 }

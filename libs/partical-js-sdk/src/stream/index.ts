@@ -137,4 +137,118 @@ export class StreamData extends Base {
     console.log({ data });
     return data;
   }
+
+  async createDataFromSchema(content: {
+    name: string;
+    description: string;
+    logo: string;
+    twitter: string;
+    facebook: string;
+    instagram: string;
+    fundingAddress: string;
+  }) {
+    interface Schema {
+      [appId: string]: string[];
+    }
+
+    // object to store the appid and the columns it uses from the schema
+    const dependencyResolver: Schema = {
+      appId1: ['name', 'description', 'logo'],
+      appId2: ['twitter', 'facebook', 'instagram'],
+      appId3: ['fundingAddress'],
+    };
+
+    // create a new ceramic client
+    const ceramic = new CeramicClient('http://localhost:7007');
+
+    // create a tile document for each app which contains data required by the app
+    const appIds = Object.keys(dependencyResolver);
+    const appData = await Promise.all(
+      appIds.map(async (appId) => {
+        const appData: any = {};
+        const appDataKeys = dependencyResolver[appId];
+        appDataKeys.forEach((key) => {
+          appData[key] = content[key as keyof typeof content];
+        });
+        // const doc = await TileDocument.create(ceramic, appId, appData);
+        // return doc.id;
+        console.log({ appData });
+      })
+    );
+  }
+
+  async getDataFromSchema() {
+    interface Schema {
+      [appId: string]: string[];
+    }
+
+    // object to store the appid and the columns it uses from the schema
+    const dependencyResolver: Schema = {
+      appId1: ['name', 'description', 'logo'],
+      appId2: ['twitter', 'facebook', 'instagram'],
+      appId3: ['fundingAddress'],
+    };
+
+    // create a new ceramic client
+    const ceramic = new CeramicClient('http://localhost:7007');
+
+    // get the data from each of the appId documents and filter out the data that is not required by the app
+    const appIds = Object.keys(dependencyResolver);
+    const appData = await Promise.all(
+      appIds.map(async (appId) => {
+        const appData: any = {};
+        const appDataKeys = dependencyResolver[appId];
+        const doc = await TileDocument.load(ceramic, appId);
+        const content = doc.content as any;
+        appDataKeys.forEach((key) => {
+          appData[key] = content[key as keyof typeof content];
+        });
+        return appData;
+      })
+    );
+  }
+
+  async updateDataFromSchema(
+    content: Partial<{
+      name: string;
+      description: string;
+      logo: string;
+      twitter: string;
+      facebook: string;
+      instagram: string;
+      fundingAddress: string;
+    }>
+  ) {
+    interface Schema {
+      [appId: string]: string[];
+    }
+
+    // object to store the appid and the columns it uses from the schema
+    const dependencyResolver: Schema = {
+      appId1: ['name', 'description', 'logo'],
+      appId2: ['twitter', 'facebook', 'instagram'],
+      appId3: ['fundingAddress'],
+    };
+
+    // create a new ceramic client
+    const ceramic = new CeramicClient('http://localhost:7007');
+
+    // update the document for each app with the content provided based on the schema
+    const appIds = Object.keys(dependencyResolver);
+    const appData = await Promise.all(
+      appIds.map(async (appId) => {
+        const appData: any = {};
+        const appDataKeys = dependencyResolver[appId];
+        appDataKeys.forEach((key) => {
+          appData[key] = content[key as keyof typeof content];
+        });
+        const doc = await TileDocument.load(ceramic, appId);
+        const doccontent = doc.content as any;
+        await doc.update({
+          ...doccontent,
+          ...appData,
+        });
+      })
+    );
+  }
 }
