@@ -8,7 +8,7 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import OnChainEntity from '../contract/OnChainEntity';
 import OnChainEntityFactory from '../contract/OnChainEntityFactory';
 import Lit from '../lit';
-import Ceramic from '../ceramic';
+import { Ceramic } from '../ceramic';
 import { storeMetadata } from '../utils';
 import LitJsSdk from 'lit-js-sdk';
 import { Indexor } from '../indexor';
@@ -87,7 +87,7 @@ export class Entity {
     const entities = await Indexor.queryIndex('EntityMapping', {
       userAddress: userAddress.toLowerCase(),
     });
-    return entities[0];
+    return entities;
   }
 
   static async getAppData(entityAddress: string) {

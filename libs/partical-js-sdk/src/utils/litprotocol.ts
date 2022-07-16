@@ -1,10 +1,8 @@
-import { CeramicClient } from '@ceramicnetwork/http-client';
 import LitJsSdk from 'lit-js-sdk';
 import { storeMetadata } from '.';
 import { EntityABI } from '../constants/abi';
 import { updateEntityUri } from './contract';
-import { authenticateCeramic, createStream } from './stream';
-import Ceramic from '../ceramic';
+import { Ceramic } from '../ceramic';
 
 const client = new LitJsSdk.LitNodeClient();
 const chain = 'rinkeby';

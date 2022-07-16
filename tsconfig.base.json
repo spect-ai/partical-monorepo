@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@partical/contracts": ["libs/contracts/src/index.ts"],
-      "@partical/partical-js-sdk": ["libs/partical-js-sdk/src/index.ts"]
+      "@partical/partical-js-sdk": ["libs/partical-js-sdk/src/index.ts"],
+      "@partical/react-partical": ["libs/react-partical/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

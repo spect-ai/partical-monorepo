@@ -1,7 +1,11 @@
 import { Box, Button, Heading, IconCog, Stack } from 'degen';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function EntityDashboard() {
+  useEffect(() => {
+    console.log('EntityDashboard');
+  }, []);
+
   return (
     <Box paddingX="8">
       <Stack>

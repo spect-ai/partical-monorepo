@@ -1,4 +1,4 @@
-import EntityDashboard from 'apps/dashboard/app/modules/entityDashboard';
+import EntityDashboard from '../../../app/modules/entityDashboard';
 import Layout from '../../../app/common/layout';
 
 export function Address() {

@@ -1,8 +1,5 @@
 import { CeramicClient } from '@ceramicnetwork/http-client';
-import { Contract } from 'ethers';
-import LitJsSdk from 'lit-js-sdk';
-import Moralis from 'moralis';
-import Ceramic from '../ceramic';
+import { Ceramic } from '../ceramic';
 import { Indexor } from '../indexor';
 import Lit from '../lit';
 

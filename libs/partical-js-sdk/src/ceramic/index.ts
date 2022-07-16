@@ -4,7 +4,7 @@ import { Ed25519Provider } from 'key-did-provider-ed25519';
 import KeyResolver from 'key-did-resolver';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 
-export default class Ceramic {
+export class Ceramic {
   static ceramicClient: any;
 
   static initialize(_ceramicClientUri?: string) {

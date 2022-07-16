@@ -1,6 +1,7 @@
 import { Box, Button, Heading, IconPlus, Stack, Text } from 'degen';
+import { useEntity } from '@partical/react-partical';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMoralis, useMoralisQuery } from 'react-moralis';
 import styled from 'styled-components';
 
@@ -15,13 +16,23 @@ const ListContainer = styled(Box)`
 export default function Landing() {
   const { isAuthenticated, isAuthenticating, authenticate, user } =
     useMoralis();
-  const { data, isLoading, error } = useMoralisQuery(
-    'EntityMapping',
-    (query) => query.equalTo('userAddress', user?.get('ethAddress')),
-    [user]
-  );
+  const [entities, setEntities] = useState<any>();
+  const [loading, setLoading] = useState(false);
 
-  console.log({ data });
+  const { getMyEntity } = useEntity();
+
+  useEffect(() => {
+    const getEntities = async () => {
+      setLoading(true);
+      const res = await getMyEntity(user?.get('ethAddress'));
+      console.log({ res });
+      setEntities(res);
+      setLoading(false);
+    };
+    if (user) {
+      getEntities();
+    }
+  }, [getMyEntity, user]);
 
   return (
     <Box>
@@ -38,23 +49,24 @@ export default function Landing() {
             // borderRadius="2xLarge"
             height="96"
           >
-            {data.map((dao, index) => (
-              <Link key={dao.id} href={`/entity/${dao.get('entityAddress')}`}>
-                <ListContainer
-                  paddingY="4"
-                  paddingX="8"
-                  borderBottomWidth="0.375"
-                  transitionDuration="500"
-                >
-                  <Stack>
-                    <Text weight="semiBold" size="extraLarge">
-                      Dao {index}
-                    </Text>
-                    <Text variant="label">{dao.get('entityAddress')}</Text>
-                  </Stack>
-                </ListContainer>
-              </Link>
-            ))}
+            {!loading &&
+              entities?.map((dao, index) => (
+                <Link key={dao.id} href={`/entity/${dao.get('entityAddress')}`}>
+                  <ListContainer
+                    paddingY="4"
+                    paddingX="8"
+                    borderBottomWidth="0.375"
+                    transitionDuration="500"
+                  >
+                    <Stack>
+                      <Text weight="semiBold" size="extraLarge">
+                        Dao {index}
+                      </Text>
+                      <Text variant="label">{dao.get('entityAddress')}</Text>
+                    </Stack>
+                  </ListContainer>
+                </Link>
+              ))}
           </Box>
           <Button prefix={<IconPlus />} center variant="tertiary">
             Create a new DAO

@@ -1,3 +1,5 @@
-export * as Namespace from './namespace';
-export * as Entity from './entity';
-export * as Stream from './stream';
+export * from './client';
+export * from './entity';
+export * from './indexor';
+export * from './ceramic';
+export * from './lit';

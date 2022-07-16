@@ -1,5 +1,5 @@
 import Lit from '../lit';
-import Ceramic from '../ceramic';
+import { Ceramic } from '../ceramic';
 
 const chain = 'rinkeby';
 const standardContractType = 'ERC1155';
