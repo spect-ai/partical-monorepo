@@ -20,13 +20,18 @@ export class Indexor {
   }
 
   static async queryIndex(index: string, query: object) {
+    console.log('hiiiii');
     const IndexorObj = Moralis.Object.extend(index);
     const queryObj = new Moralis.Query(IndexorObj);
 
     for (const [key, val] of Object.entries(query)) {
       queryObj.equalTo(key, val);
     }
-
+    console.log({ queryObj });
     return await queryObj.find();
+  }
+
+  static async deleteIndex(index: string, query: object) {
+    console.log('delete');
   }
 }

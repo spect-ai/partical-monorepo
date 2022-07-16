@@ -1,26 +1,24 @@
-import { EntityABI, FactoryABI } from '../constants/abi';
+import { EntityABI } from '../constants/abi';
 import { contractAddress } from '../constants/address';
-import { createEntity, mintAccessToken } from '../utils/contract';
-import litprotocol from '../utils/litprotocol';
+import { mintAccessToken } from '../utils/contract';
 import Moralis from 'moralis';
-import { getMultipleStreams, getStream, updateStream } from '../utils/stream';
-import { CeramicClient } from '@ceramicnetwork/http-client';
 import OnChainEntity from '../contract/OnChainEntity';
 import OnChainEntityFactory from '../contract/OnChainEntityFactory';
 import Lit from '../lit';
 import { Ceramic } from '../ceramic';
 import { storeMetadata } from '../utils';
-import LitJsSdk from 'lit-js-sdk';
 import { Indexor } from '../indexor';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const LitJsSdk = require('lit-js-sdk');
 
-const standardContractType = 'ERC1155';
 const chain = 'rinkeby';
+const standardContractType = 'ERC1155';
 export class Entity {
   constructor() {
     if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
   }
 
-  static async initialize(userAddress: string) {
+  static async createEntity(userAddress: string) {
     try {
       /** TODO: Move this to Partical client */
       OnChainEntityFactory.initContract();

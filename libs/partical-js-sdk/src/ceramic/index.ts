@@ -20,16 +20,23 @@ export class Ceramic {
     this.ceramicClient.did = did;
   }
 
-  static async createStream(content: any) {
-    const doc = await TileDocument.create(this.ceramicClient, content);
+  static async createStream(content: any, tags: string[], appId: string) {
+    const doc = await TileDocument.create(this.ceramicClient, content, {
+      tags,
+      family: appId,
+    });
     console.log(doc.id.toString());
     return doc.id.toString();
   }
 
-  static async getStream(streamId: string) {
+  static async getStream<T>(streamId: string) {
     const doc = await TileDocument.load(this.ceramicClient, streamId);
-    const content = doc.content as any;
-    return content;
+    const content = doc.content as T;
+    const metadata = doc.metadata;
+    return {
+      content,
+      metadata,
+    };
   }
 
   static async updateStream(streamId: string, content: any) {

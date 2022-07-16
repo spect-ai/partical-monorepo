@@ -11,8 +11,6 @@ import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import '@fontsource/inter/800.css';
 import '@fontsource/inter/900.css';
-import { CeramicClient } from '@ceramicnetwork/http-client';
-import LitJsSdk from 'lit-js-sdk';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -20,10 +18,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID as string}
       serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL as string}
     >
-      <ParticalClientProvider
-        ceramicClient={new CeramicClient('http://localhost:7007')}
-        litClient={new LitJsSdk.LitNodeClient()}
-      >
+      <ParticalClientProvider ceramicClientUri="https://localhost:7007">
         <ThemeProvider defaultMode="dark" defaultAccent="foreground">
           <Component {...pageProps} />
         </ThemeProvider>

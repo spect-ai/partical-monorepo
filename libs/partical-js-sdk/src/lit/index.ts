@@ -1,4 +1,5 @@
-import LitJsSdk from 'lit-js-sdk';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const LitJsSdk = require('lit-js-sdk');
 
 const client = new LitJsSdk.LitNodeClient();
 const standardContractType = 'ERC1155';
@@ -21,6 +22,36 @@ export default class Lit {
       message
     );
     return { encryptedString, symmetricKey };
+  }
+
+  static async descryptKey(
+    encryptedSymmetricKey: string,
+    entityAddress: string
+  ): Promise<Uint8Array> {
+    const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+
+    const accessControlConditions = [
+      {
+        contractAddress: entityAddress,
+        standardContractType,
+        chain,
+        method: 'balanceOf',
+        parameters: [':userAddress', '0'],
+        returnValueTest: {
+          comparator: '>',
+          value: '0',
+        },
+      },
+    ];
+    console.log(encryptedSymmetricKey);
+    const symmetricKey = await client.getEncryptionKey({
+      accessControlConditions,
+      toDecrypt: encryptedSymmetricKey,
+      chain,
+      authSig,
+    });
+
+    return symmetricKey;
   }
 
   static async saveKey(

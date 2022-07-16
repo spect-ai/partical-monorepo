@@ -26,6 +26,7 @@
     "nft.storage": "^6.4.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-grid-system": "^8.1.5",
     "react-is": "18.2.0",
     "react-moralis": "^1.4.0",
     "regenerator-runtime": "0.13.7",
