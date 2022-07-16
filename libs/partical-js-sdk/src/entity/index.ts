@@ -11,31 +11,13 @@ import Lit from '../lit';
 import Ceramic from '../ceramic';
 import { storeMetadata } from '../utils';
 import LitJsSdk from 'lit-js-sdk';
+import { Indexor } from '../indexor';
 
 const standardContractType = 'ERC1155';
 const chain = 'rinkeby';
 export class Entity {
   constructor() {
     if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
-  }
-
-  static async addIndex(
-    entityAddress: string,
-    userAddress: string,
-    encryptedSymmetricKey: string,
-    streamId: string,
-    url: string
-  ) {
-    const EntityMapping = Moralis.Object.extend('EntityMapping');
-    const entityMapping = new EntityMapping();
-
-    entityMapping.set('entityAddress', entityAddress);
-    entityMapping.set('userAddress', userAddress.toLowerCase());
-    entityMapping.set('encryptedSymmetricKey', encryptedSymmetricKey);
-    entityMapping.set('streamId', streamId);
-    entityMapping.set('url', url);
-
-    return await entityMapping.save();
   }
 
   static async initialize(userAddress: string) {
@@ -52,7 +34,7 @@ export class Entity {
 
       /** Create symmetric to be used as seed for ceramic key controller */
       const { encryptedString, symmetricKey }: any =
-        await Lit.checkAndSignAuthMessage('encrypt', entityAddress);
+        await Lit.checkAndSignAuthMessage('encrypt');
 
       /** Authenticate using symmetric key and create key did */
       await Ceramic.authenticate(symmetricKey);
@@ -79,20 +61,22 @@ export class Entity {
       );
 
       /** Update entity's on chain uri with new ipfs uri */
-
       const url = await storeMetadata(encryptedKey, streamId);
 
       /** Update entity's on chain uri with new ipfs uri */
       await OnChainEntity.update(url);
 
       /** Add index in moralis for entity */
-      return await Entity.addIndex(
+      return await Indexor.addIndex('EntityMapping', {
         entityAddress,
         userAddress,
-        LitJsSdk.uint8arrayToString(encryptedKey, 'base16'),
+        encryptedSymmetricKey: LitJsSdk.uint8arrayToString(
+          encryptedKey,
+          'base16'
+        ),
         streamId,
-        url
-      );
+        url,
+      });
     } catch (e) {
       console.log({ e });
       return false;
@@ -100,23 +84,21 @@ export class Entity {
   }
 
   static async getByUser(userAddress: string) {
-    const EntityMapping = Moralis.Object.extend('EntityMapping');
-    const query = new Moralis.Query(EntityMapping);
-    console.log({ userAddress });
-    query.equalTo('userAddress', userAddress.toLowerCase());
-    const results = await query.find();
-    return results[0];
+    const entities = await Indexor.queryIndex('EntityMapping', {
+      userAddress: userAddress.toLowerCase(),
+    });
+    return entities[0];
   }
 
   static async getAppData(entityAddress: string) {
-    const EntityMapping = Moralis.Object.extend('EntityMapping');
-    const query = new Moralis.Query(EntityMapping);
-    query.equalTo('entityAddress', entityAddress);
-    const results = await query.find();
-    const ceramic = new CeramicClient('http://localhost:7007');
+    Ceramic.initialize();
 
-    const baseData = await getStream(results[0].get('streamId'), ceramic);
-    const appStreamObj = await getMultipleStreams(baseData.appData, ceramic);
+    const entities = await Indexor.queryIndex('EntityMapping', {
+      entityAddress,
+    });
+
+    const baseData = await Ceramic.getStream(entities[0].get('streamId'));
+    const appStreamObj = await Ceramic.getMultipleStreams(baseData.appData);
 
     const appData = Object.keys(appStreamObj).map((key) => {
       const stream = appStreamObj[key];

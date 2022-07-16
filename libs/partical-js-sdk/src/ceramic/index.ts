@@ -26,14 +26,14 @@ export default class Ceramic {
     return doc.id.toString();
   }
 
-  static async getStream(streamId: string, ceramic: any) {
-    const doc = await TileDocument.load(ceramic, streamId);
+  static async getStream(streamId: string) {
+    const doc = await TileDocument.load(this.ceramicClient, streamId);
     const content = doc.content as any;
     return content;
   }
 
-  static async updateStream(streamId: string, content: any, ceramic: any) {
-    const doc = await TileDocument.load(ceramic, streamId);
+  static async updateStream(streamId: string, content: any) {
+    const doc = await TileDocument.load(this.ceramicClient, streamId);
     const docContent = doc.content as any;
     await doc.update({
       ...docContent,
@@ -41,9 +41,9 @@ export default class Ceramic {
     });
   }
 
-  static async getMultipleStreams(streamIds: string[], ceramic: any) {
+  static async getMultipleStreams(streamIds: string[]) {
     const queries = streamIds.map((streamId) => ({ streamId }));
-    return await ceramic.multiQuery(queries);
+    return await this.ceramicClient.multiQuery(queries);
   }
 
   static async getCommit(stream: any) {

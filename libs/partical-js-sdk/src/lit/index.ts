@@ -15,10 +15,7 @@ export default class Lit {
     }
   }
 
-  static async checkAndSignAuthMessage(
-    message: string,
-    address: string
-  ): Promise<any> {
+  static async checkAndSignAuthMessage(message: string): Promise<any> {
     this.authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
       message

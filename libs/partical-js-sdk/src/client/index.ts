@@ -3,6 +3,7 @@ import { Contract } from 'ethers';
 import LitJsSdk from 'lit-js-sdk';
 import Moralis from 'moralis';
 import Ceramic from '../ceramic';
+import { Indexor } from '../indexor';
 import Lit from '../lit';
 
 export class ParticalClient {
@@ -10,11 +11,7 @@ export class ParticalClient {
   litClient: any;
 
   constructor(_ceramicClientUri?: string) {
-    const serverUrl = 'https://e6ss72rsmosx.usemoralis.com:2053/server';
-    const appId = '6F5BP7sxHeCFc3yczy70u0xlF72oS9YQbOygTnoT';
-
-    void Moralis.start({ serverUrl, appId });
-
+    Indexor.initialize();
     Ceramic.initialize(_ceramicClientUri);
     Lit.connect();
   }
