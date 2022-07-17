@@ -49,4 +49,26 @@ export class Data {
     console.log({ data });
     return data;
   }
+
+  static async updateData<T>(
+    streamId: string,
+    data: T,
+    entityAddress: string,
+    encryptedSymmetricKey: string
+  ): Promise<T | undefined> {
+    try {
+      console.log({ encryptedSymmetricKey, entityAddress });
+      const symmetricKey = await Lit.descryptKey(
+        encryptedSymmetricKey,
+        entityAddress
+      );
+      console.log('symmetricKey', symmetricKey);
+      /** Authenticate using symmetric key and create key did */
+      await Ceramic.authenticate(symmetricKey);
+      return await Ceramic.updateStream(streamId, data);
+    } catch (e) {
+      console.log({ e });
+      return undefined;
+    }
+  }
 }

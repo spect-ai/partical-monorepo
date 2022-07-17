@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Stack, Text } from 'degen';
+import { Box, Heading, Stack, Text } from 'degen';
 import { useStream } from '@partical/react-partical';
 import { useRouter } from 'next/router';
 import { GrantData } from '../../createGrant';
@@ -6,10 +6,9 @@ import Link from 'next/link';
 import { GrantImage } from '../../../components/Grant';
 import { Col, Container, Row } from 'react-grid-system';
 import { smartTrim } from '../../../utils/utils';
-import { Layout } from '@partical/common';
+import { Layout, Loader } from '@partical/common';
 import styled from 'styled-components';
-import { useMoralis } from 'react-moralis';
-import { useEffect, useState } from 'react';
+import UpdateGrant from '../../../components/UpdateGrant';
 
 const GrantCover = styled(GrantImage)`
   height: 250px;
@@ -18,22 +17,10 @@ const GrantCover = styled(GrantImage)`
 export function Stream() {
   const router = useRouter();
   const { stream } = router.query;
-  const { streamData, canEditStream } = useStream<GrantData>(stream as string);
-  const { user } = useMoralis();
-  const [canEdit, setCanEdit] = useState(false);
-
-  useEffect(() => {
-    const fetchCanEdit = async () => {
-      const canEdit = await canEditStream(user?.get('ethAddress'));
-      setCanEdit(canEdit);
-    };
-    if (user) {
-      fetchCanEdit();
-    }
-  }, [canEditStream, user]);
-
+  const { streamData, loading } = useStream<GrantData>(stream as string);
   return (
     <Layout>
+      {loading && <Loader loading text="Loading..." />}
       <Box>
         <Box
           width="full"
@@ -54,11 +41,7 @@ export function Stream() {
               </Text>
               <Stack direction="horizontal">
                 <Heading>{streamData.title}</Heading>
-                {canEdit && (
-                  <Button size="small" variant="secondary">
-                    Edit Grant
-                  </Button>
-                )}
+                <UpdateGrant grant={streamData} streamId={stream as string} />
               </Stack>
               <Box borderTopWidth="0.375" borderBottomWidth="0.375">
                 <Container>

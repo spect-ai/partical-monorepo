@@ -39,13 +39,18 @@ export class Ceramic {
     };
   }
 
-  static async updateStream(streamId: string, content: any) {
+  static async updateStream<T>(streamId: string, content: Partial<T>) {
     const doc = await TileDocument.load(this.ceramicClient, streamId);
-    const docContent = doc.content as any;
-    await doc.update({
-      ...docContent,
-      ...content,
-    });
+    const docContent = doc.content as T;
+    try {
+      await doc.update({
+        ...docContent,
+        ...content,
+      });
+      return doc.content as T;
+    } catch (e) {
+      return undefined;
+    }
   }
 
   static async getMultipleStreams(streamIds: string[]) {

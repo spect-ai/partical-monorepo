@@ -28,8 +28,6 @@ export function useAppData<T>({ appId }: Props) {
       const entity = await Indexor.queryIndex('EntityMapping', {
         entityAddress,
       });
-      console.log('symm key', entity[0].get('encryptedSymmetricKey'));
-      console.log({ entityAddress });
       const streamId = await Data.createData<T>(
         data,
         appId,
@@ -44,9 +42,30 @@ export function useAppData<T>({ appId }: Props) {
     setLoading(false);
   };
 
+  const updateAppData = async (
+    streamId: string,
+    data: Partial<T>,
+    entityAddress: string
+  ) => {
+    setLoading(true);
+    const entity = await Indexor.queryIndex('EntityMapping', {
+      entityAddress,
+    });
+    const res = await Data.updateData(
+      streamId,
+      data,
+      entityAddress,
+      entity[0].get('encryptedSymmetricKey')
+    );
+    console.log({ res });
+    setLoading(false);
+    return res;
+  };
+
   return {
     createAppData,
     getAppData,
+    updateAppData,
     appData,
     loading,
     error,
