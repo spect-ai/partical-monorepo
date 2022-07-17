@@ -18,14 +18,10 @@ export class Entity {
     if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
   }
 
-  static async createEntity(userAddress: string) {
+  static async create(userAddress: string) {
     try {
-      /** TODO: Move this to Partical client */
-      OnChainEntityFactory.initContract();
-      Lit.connect();
-      Ceramic.initialize();
-
       /** Create entity on chain using factory contract */
+      console.log('Creating entity ..');
       const data = await OnChainEntity.create('');
       const entityAddress = data.events[1].args.entity;
       OnChainEntity.initContract(entityAddress);
@@ -36,11 +32,15 @@ export class Entity {
 
       /** Authenticate using symmetric key and create key did */
       await Ceramic.authenticate(symmetricKey);
-      const streamId = await Ceramic.createStream({
-        contractAddress,
-        appData: [],
-      });
-
+      const streamId = await Ceramic.createStream(
+        {
+          contractAddress,
+          appData: [],
+        },
+        ['entity'],
+        'partical-main'
+      );
+      console.log(`streamId: ${streamId}`);
       const encryptedKey = await Lit.saveKey(
         [
           {
@@ -60,9 +60,11 @@ export class Entity {
 
       /** Update entity's on chain uri with new ipfs uri */
       const url = await storeMetadata(encryptedKey, streamId);
+      console.log({ url });
 
       /** Update entity's on chain uri with new ipfs uri */
       await OnChainEntity.update(url);
+      console.log('On chain entity created');
 
       /** Add index in moralis for entity */
       return await Indexor.addIndex('EntityMapping', {
@@ -88,26 +90,26 @@ export class Entity {
     return entities;
   }
 
-  static async getAppData(entityAddress: string) {
-    Ceramic.initialize();
+  // static async getAppData(entityAddress: string) {
+  //   Ceramic.initialize();
 
-    const entities = await Indexor.queryIndex('EntityMapping', {
-      entityAddress,
-    });
+  //   const entities = await Indexor.queryIndex('EntityMapping', {
+  //     entityAddress,
+  //   });
 
-    const baseData = await Ceramic.getStream(entities[0].get('streamId'));
-    const appStreamObj = await Ceramic.getMultipleStreams(baseData.appData);
+  //   const baseData = await Ceramic.getStream(entities[0].get('streamId'));
+  //   const appStreamObj = await Ceramic.getMultipleStreams(baseData.appData);
 
-    const appData = Object.keys(appStreamObj).map((key) => {
-      const stream = appStreamObj[key];
-      const content = stream.content as any;
-      return { ...content, streamId: key };
-    });
-    return {
-      ...baseData,
-      appData,
-    };
-  }
+  //   const appData = Object.keys(appStreamObj).map((key) => {
+  //     const stream = appStreamObj[key];
+  //     const content = stream.content as any;
+  //     return { ...content, streamId: key };
+  //   });
+  //   return {
+  //     ...baseData,
+  //     appData,
+  //   };
+  // }
 
   static async giveAccess(entityAddress: string, userAddress: string) {
     const res = await mintAccessToken(

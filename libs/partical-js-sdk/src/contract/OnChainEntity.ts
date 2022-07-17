@@ -17,6 +17,9 @@ export default class OnChainEntity {
   }
 
   static async create(uri: string) {
+    console.log(uri);
+    console.log(OnChainEntityFactory);
+
     return await OnChainEntityFactory.createEntity(uri);
   }
 

@@ -9,6 +9,7 @@ export class Indexor {
   }
 
   static async addIndex(index: string, indexedData: object) {
+    console.log('adding index ...');
     const IndexorObj = Moralis.Object.extend(index);
     const indexorObj = new IndexorObj();
 

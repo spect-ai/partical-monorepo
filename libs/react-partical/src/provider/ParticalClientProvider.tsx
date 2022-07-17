@@ -32,7 +32,7 @@ export const useParticalClient = () => {
 
 export interface ParticalClientProviderProps {
   children: React.ReactNode;
-  ceramicClientUri: string;
+  ceramicClientUri?: string;
 }
 
 export function ParticalClientProvider({

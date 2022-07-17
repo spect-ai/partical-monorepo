@@ -19,7 +19,7 @@ export default function Landing() {
   const [entities, setEntities] = useState<any>();
   const [loading, setLoading] = useState(false);
 
-  const { getMyEntity } = useEntity();
+  const { getMyEntity, createEntity } = useEntity();
 
   useEffect(() => {
     const getEntities = async () => {
@@ -68,7 +68,15 @@ export default function Landing() {
                 </Link>
               ))}
           </Box>
-          <Button prefix={<IconPlus />} center variant="tertiary">
+          <Button
+            onClick={() => {
+              console.log('create');
+              createEntity(user?.get('ethAddress'));
+            }}
+            prefix={<IconPlus />}
+            center
+            variant="tertiary"
+          >
             Create a new DAO
           </Button>
         </Stack>
