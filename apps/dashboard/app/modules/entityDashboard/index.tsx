@@ -1,6 +1,15 @@
-import { Box, Button, Heading, IconCog, IconPlus, Stack } from 'degen';
+import {
+  Box,
+  Button,
+  Heading,
+  IconCog,
+  IconPlus,
+  IconPlusSmall,
+  Stack,
+} from 'degen';
 import React, { useEffect } from 'react';
 import { useAppData, useEntity } from '@partical/react-partical';
+import GiveAccess from '../giveAccess';
 
 export default function EntityDashboard() {
   const { getMyEntity, createEntity } = useEntity();
@@ -17,6 +26,8 @@ export default function EntityDashboard() {
           <Button shape="circle" size="small" variant="tertiary">
             <IconCog />
           </Button>
+
+          <GiveAccess />
           <Button
             onClick={() => {
               console.log('create');
@@ -24,9 +35,11 @@ export default function EntityDashboard() {
               //   name: 'test',
               // }, '');
             }}
-            prefix={<IconPlus />}
+            size="small"
+            prefix={<IconPlusSmall />}
             center
-            variant="tertiary"
+            variant="transparent"
+            width="56"
           >
             Add Description
           </Button>

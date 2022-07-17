@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Ceramic, Indexor } from '@partical/partical-js-sdk';
 
 export function useStream<T>(streamId: string) {
@@ -11,20 +11,20 @@ export function useStream<T>(streamId: string) {
   }>({} as any);
   const [entityAddress, setEntityAddress] = useState('');
 
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const { content, metadata } = await Ceramic.getStream<T>(streamId);
+      setStreamData(content);
+      setMetadata(metadata);
+    } catch (e) {
+      console.log({ e });
+      setError('Error getting data');
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      try {
-        await Ceramic.initialize('http://localhost:7007');
-        const { content, metadata } = await Ceramic.getStream<T>(streamId);
-        setStreamData(content);
-        setMetadata(metadata);
-      } catch (e) {
-        console.log({ e });
-        setError('Error getting data');
-      }
-      setLoading(false);
-    };
     if (streamId) {
       getData();
     }
@@ -48,5 +48,8 @@ export function useStream<T>(streamId: string) {
     streamData,
     metadata,
     canEditStream,
+    entityAddress,
+    setStreamData,
+    getData,
   };
 }

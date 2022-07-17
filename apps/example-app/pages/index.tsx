@@ -14,9 +14,13 @@ export function Index() {
     appId: 'wTao5gHcMP8wEoVROtMNZ3Iz',
   });
 
+  const { isInitialized } = useMoralis();
+
   useEffect(() => {
-    void getAppData();
-  }, []);
+    if (isInitialized) {
+      void getAppData();
+    }
+  }, [isInitialized]);
 
   console.log({ appData });
 
