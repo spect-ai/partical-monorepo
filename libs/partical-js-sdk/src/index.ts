@@ -4,3 +4,4 @@ export * from './indexor';
 export * from './ceramic';
 export * from './data';
 export * from './lit';
+export * from './namespace';

@@ -10,9 +10,6 @@ export class Data {
     encryptedSymmetricKey: string
   ): Promise<string | undefined> {
     try {
-      /** TODO: Move this to Partical client */
-      Lit.connect();
-      Ceramic.initialize();
       const symmetricKey = await Lit.descryptKey(
         encryptedSymmetricKey,
         entityAddress

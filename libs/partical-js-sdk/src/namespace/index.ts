@@ -1,36 +1,46 @@
-import Moralis from 'moralis';
-import { generateKey, generateSecretHash } from '../utils';
-
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { NamespaceMetadata } from 'libs/partical-js-sdk/types';
+import { v4 as uuidv4 } from 'uuid';
+import { Indexor } from '../indexor';
+import { generateKey } from '../utils';
 export class Namespace {
-  constructor() {
-    const serverUrl = 'https://e6ss72rsmosx.usemoralis.com:2053/server';
-    const appId = '6F5BP7sxHeCFc3yczy70u0xlF72oS9YQbOygTnoT';
-
-    void Moralis.start({ serverUrl, appId });
-  }
-
-  async createNamespace(
+  static async create(
     appName: string,
     schemaName: string
   ): Promise<{
     key: string;
+    appId: string;
   }> {
     const key = generateKey();
-    // const secretHash = generateSecretHash(key);
-
     console.log({ key });
-
-    const Namespace = Moralis.Object.extend('Namespace');
-    const namespace = new Namespace();
-
-    namespace.set('appName', appName);
-    namespace.set('schemaName', schemaName);
-    namespace.set('key', key);
-
-    await namespace.save();
+    const appId = uuidv4();
+    await Indexor.addIndex('Namespace', {
+      appName,
+      schemaName,
+      key,
+      appId,
+    });
 
     return {
       key,
+      appId,
+    };
+  }
+
+  static async get(appId: string): Promise<NamespaceMetadata> {
+    // TODO filter keys for unauthorized users
+    const result = await Indexor.queryOneIndex('Namespace', {
+      appId,
+    });
+    if (!result) {
+      return {} as NamespaceMetadata;
+    }
+    return {
+      objectId: result.id,
+      appName: result.get('appName'),
+      schemaName: result.get('schemaName'),
+      key: result.get('key'),
+      appId: result.get('appId'),
     };
   }
 }
