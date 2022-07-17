@@ -2,6 +2,8 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "application-dashboard": "apps/application-dashboard",
+    "application-dashboard-e2e": "apps/application-dashboard-e2e",
     "common": "libs/common",
     "contracts": "libs/contracts",
     "dashboard": "apps/dashboard",
