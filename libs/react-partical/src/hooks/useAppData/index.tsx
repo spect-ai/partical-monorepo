@@ -1,5 +1,5 @@
 import { Data, Indexor } from '@partical/partical-js-sdk';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type Props = {
   appId: string;

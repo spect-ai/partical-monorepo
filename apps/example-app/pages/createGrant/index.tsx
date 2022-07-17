@@ -33,6 +33,7 @@ export interface GrantData {
   twitter: string;
   fundAddress: string;
   entityAddress: string;
+  streamId?: string;
 }
 
 export function CreateGrant() {

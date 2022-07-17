@@ -1,4 +1,4 @@
-import { Box, Button, Heading, IconCog, Stack } from 'degen';
+import { Box, Button, Heading, IconCog, IconPlus, Stack } from 'degen';
 import React, { useEffect } from 'react';
 import { useAppData, useEntity } from '@partical/react-partical';
 

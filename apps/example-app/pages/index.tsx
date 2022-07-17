@@ -9,8 +9,7 @@ import { useEffect } from 'react';
 import { GrantData } from './createGrant';
 
 export function Index() {
-  const grants = ['Grant 1', 'Grant 2', 'Grant 3', 'Grant 4', 'Grant 5'];
-  const { loading, error, getAppData, appData } = useAppData<GrantData>({
+  const { loading, getAppData, appData } = useAppData<GrantData>({
     appId: 'wTao5gHcMP8wEoVROtMNZ3Iz',
   });
 
