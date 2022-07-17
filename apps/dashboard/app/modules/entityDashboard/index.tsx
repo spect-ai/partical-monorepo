@@ -28,7 +28,7 @@ export default function EntityDashboard() {
             center
             variant="tertiary"
           >
-            Create a new DAO
+            Add Description
           </Button>
         </Stack>
       </Stack>

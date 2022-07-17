@@ -4,10 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Indexor } from '../indexor';
 import { generateKey } from '../utils';
 export class Namespace {
-  static async create(
-    appName: string,
-    schemaName: string
-  ): Promise<{
+  static async create(appName: string): Promise<{
     key: string;
     appId: string;
   }> {
@@ -16,7 +13,6 @@ export class Namespace {
     const appId = uuidv4();
     await Indexor.addIndex('Namespace', {
       appName,
-      schemaName,
       key,
       appId,
     });
@@ -42,5 +38,26 @@ export class Namespace {
       key: result.get('key'),
       appId: result.get('appId'),
     };
+  }
+
+  static async getByUser(userAddress: string): Promise<NamespaceMetadata[]> {
+    const results = await Indexor.queryIndex('Namespace', {
+      userAddress,
+    });
+    if (!results) {
+      return [] as NamespaceMetadata[];
+    }
+
+    const res = results.map((item) => {
+      return {
+        objectId: item.id,
+        appName: item.get('appName'),
+        schemaName: item.get('schemaName'),
+        key: item.get('key'),
+        appId: item.get('appId'),
+      };
+    });
+    console.log({ res });
+    return res;
   }
 }

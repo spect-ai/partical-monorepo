@@ -71,7 +71,7 @@ export default function Landing() {
           <Button
             onClick={() => {
               console.log('create');
-              createEntity(user?.get('ethAddress'));
+              createEntity(user?.get('ethAddress'), 'test');
             }}
             prefix={<IconPlus />}
             center

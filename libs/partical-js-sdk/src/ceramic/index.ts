@@ -21,6 +21,7 @@ export class Ceramic {
   }
 
   static async createStream(content: any, tags: string[], appId: string) {
+    console.log({ content, tags, appId });
     const doc = await TileDocument.create(this.ceramicClient, content, {
       tags,
       family: appId,
