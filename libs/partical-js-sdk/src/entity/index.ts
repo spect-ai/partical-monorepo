@@ -1,5 +1,4 @@
 import { EntityABI } from '../constants/abi';
-import { contractAddress } from '../constants/address';
 import { mintAccessToken } from '../utils/contract';
 import Moralis from 'moralis';
 import OnChainEntity from '../contract/OnChainEntity';
@@ -18,7 +17,7 @@ export class Entity {
     if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
   }
 
-  static async create(userAddress: string) {
+  static async create(userAddress: string, name: string) {
     try {
       /** Create entity on chain using factory contract */
       console.log('Creating entity ..');
@@ -27,14 +26,15 @@ export class Entity {
       OnChainEntity.initContract(entityAddress);
 
       /** Create symmetric to be used as seed for ceramic key controller */
-      const { encryptedString, symmetricKey }: any =
-        await Lit.checkAndSignAuthMessage('encrypt');
-
+      const { symmetricKey }: any = await Lit.checkAndSignAuthMessage(
+        'encrypt'
+      );
       /** Authenticate using symmetric key and create key did */
+      await Ceramic.initialize('http://localhost:7007'); // client not available have
       await Ceramic.authenticate(symmetricKey);
       const streamId = await Ceramic.createStream(
         {
-          contractAddress,
+          contractAddress: entityAddress,
           appData: [],
         },
         ['entity'],
@@ -44,7 +44,7 @@ export class Entity {
       const encryptedKey = await Lit.saveKey(
         [
           {
-            contractAddress,
+            contractAddress: entityAddress,
             standardContractType,
             chain,
             method: 'balanceOf',
@@ -55,11 +55,14 @@ export class Entity {
             },
           },
         ],
-        encryptedString
+        symmetricKey
       );
-
       /** Update entity's on chain uri with new ipfs uri */
-      const url = await storeMetadata(encryptedKey, streamId);
+      const url = await storeMetadata(
+        name,
+        LitJsSdk.uint8arrayToString(encryptedKey, 'base16'),
+        streamId
+      );
       console.log({ url });
 
       /** Update entity's on chain uri with new ipfs uri */
@@ -76,6 +79,7 @@ export class Entity {
         ),
         streamId,
         url,
+        name,
       });
     } catch (e) {
       console.log({ e });

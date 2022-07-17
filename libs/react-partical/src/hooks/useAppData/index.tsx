@@ -28,7 +28,8 @@ export function useAppData<T>({ appId }: Props) {
       const entity = await Indexor.queryIndex('EntityMapping', {
         entityAddress,
       });
-      console.log(entity[0].get('encryptedSymmetricKey'));
+      console.log('symm key', entity[0].get('encryptedSymmetricKey'));
+      console.log({ entityAddress });
       const streamId = await Data.createData<T>(
         data,
         appId,

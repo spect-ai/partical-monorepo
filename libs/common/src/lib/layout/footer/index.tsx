@@ -11,7 +11,13 @@ export default function Footer() {
       paddingX="8"
     >
       <Box />
-      <Text font="mono">Made with ❤️ by Spect Labs</Text>
+      <Text font="mono">
+        Made with{' '}
+        <span role="img" aria-label="Heart">
+          ❤️
+        </span>{' '}
+        by Spect Labs
+      </Text>
     </Box>
   );
 }

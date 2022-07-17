@@ -9,7 +9,7 @@ type Props = {
   grant: GrantData;
 };
 
-export const GrantCover = styled.div<{ src: string }>`
+export const GrantImage = styled.div<{ src: string }>`
   background-image: url(${({ src }) => src});
   background-size: cover;
   background-position: center;
@@ -30,7 +30,7 @@ export default function Grant({ grant }: Props) {
         cursor="pointer"
       >
         <Stack align="center" space="1">
-          <GrantCover src={grant.image} />
+          <GrantImage src={grant.image} />
           <Box padding="4">
             <Text align="center" weight="semiBold" size="large">
               {grant.title}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Ceramic } from '@partical/partical-js-sdk';
+import { Ceramic, Indexor } from '@partical/partical-js-sdk';
 
 export function useStream<T>(streamId: string) {
   const [loading, setLoading] = useState(false);
@@ -9,6 +9,7 @@ export function useStream<T>(streamId: string) {
     tags?: string[];
     family?: string;
   }>({} as any);
+  const [entityAddress, setEntityAddress] = useState('');
 
   useEffect(() => {
     const getData = async () => {
@@ -29,10 +30,23 @@ export function useStream<T>(streamId: string) {
     }
   }, [streamId]);
 
+  const canEditStream = async (userAddress: string) => {
+    const stream = await Indexor.queryOneIndex('StreamIndexer', {
+      streamId,
+    });
+    setEntityAddress(stream?.get('entityAddress'));
+    const res = await Indexor.queryOneIndex('EntityMapping', {
+      userAddress,
+      entityAddress: stream?.get('entityAddress'),
+    });
+    return !!res;
+  };
+
   return {
     loading,
     error,
     streamData,
     metadata,
+    canEditStream,
   };
 }

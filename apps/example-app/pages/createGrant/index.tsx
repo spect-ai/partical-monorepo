@@ -6,13 +6,16 @@ import {
   Input,
   MediaPicker,
   Stack,
+  Tag,
   Text,
   Textarea,
 } from 'degen';
 import styled from 'styled-components';
-import { useAppData } from '@partical/react-partical';
-import { useState } from 'react';
-import { useMoralisFile } from 'react-moralis';
+import { useAppData, useEntity } from '@partical/react-partical';
+import { useEffect, useState } from 'react';
+import { useMoralis, useMoralisFile } from 'react-moralis';
+import { Layout } from '@partical/common';
+import CreateEntity from '../../components/CreateEntity';
 
 const ScrollContainer = styled(Box)`
   ::-webkit-scrollbar {
@@ -20,7 +23,7 @@ const ScrollContainer = styled(Box)`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
-  height: calc(100vh - 14rem);
+  height: calc(100vh - 16rem);
   overflow-y: auto;
 `;
 
@@ -50,8 +53,15 @@ export function CreateGrant() {
   const [fundAddress, setfundAddress] = useState(
     '0x6304CE63F2EBf8C0Cc76b60d34Cc52a84aBB6057'
   );
-
   const { isUploading, moralisFile, saveFile } = useMoralisFile();
+  const { user } = useMoralis();
+  const { getMyEntity, entities } = useEntity();
+
+  useEffect(() => {
+    if (user) {
+      void getMyEntity(user.get('ethAddress'));
+    }
+  }, [user]);
 
   const uploadFile = async (file: File) => {
     console.log({ file });
@@ -61,16 +71,23 @@ export function CreateGrant() {
   };
 
   return (
-    <Box
-      backgroundColor="background"
-      style={{
-        height: '100vh',
-      }}
-    >
-      <Header />
+    <Layout>
       <Stack align="center">
         <ScrollContainer width="1/2">
           <Stack>
+            <Stack space="2">
+              <Box marginLeft="4">
+                <Text weight="semiBold">Entity</Text>
+              </Box>
+              <Stack direction="horizontal" wrap>
+                {entities?.map((entity) => (
+                  <Box key={entity.id} cursor="pointer">
+                    <Tag hover>{entity.get('name')}</Tag>
+                  </Box>
+                ))}
+                <CreateEntity />
+              </Stack>
+            </Stack>
             <Input
               label="Title"
               placeholder="My Grant title"
@@ -129,16 +146,16 @@ export function CreateGrant() {
                 website,
                 twitter,
                 fundAddress,
-                entityAddress: '0x06EF5BC231586Ad7454AAabaa08E62Cd4652737a',
+                entityAddress: (entities?.[0] as any)?.get('entityAddress'),
               },
-              '0x06EF5BC231586Ad7454AAabaa08E62Cd4652737a'
+              (entities?.[0] as any)?.get('entityAddress')
             );
           }}
         >
           Create Grant
         </Button>
       </Stack>
-    </Box>
+    </Layout>
   );
 }
 

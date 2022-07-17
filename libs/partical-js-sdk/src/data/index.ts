@@ -10,10 +10,12 @@ export class Data {
     encryptedSymmetricKey: string
   ): Promise<string | undefined> {
     try {
+      console.log({ encryptedSymmetricKey, entityAddress });
       const symmetricKey = await Lit.descryptKey(
         encryptedSymmetricKey,
         entityAddress
       );
+      console.log('symmetricKey', symmetricKey);
       /** Authenticate using symmetric key and create key did */
       await Ceramic.authenticate(symmetricKey);
       const streamId = await Ceramic.createStream(data, tags, appId);

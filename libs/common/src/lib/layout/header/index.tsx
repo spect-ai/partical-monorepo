@@ -3,7 +3,8 @@ import React from 'react';
 import { useMoralis } from 'react-moralis';
 
 export default function Header() {
-  const { authenticate, isAuthenticated, user, logout } = useMoralis();
+  const { authenticate, isAuthenticated, user, logout, isAuthenticating } =
+    useMoralis();
 
   return (
     <Box
@@ -15,13 +16,21 @@ export default function Header() {
       height="28"
     >
       <Box></Box>
-      {isAuthenticated && (
+      {!isAuthenticated ? (
         // <Box onClick={() => logout()} cursor="pointer">
         //   <Tag hover>{user.get('ethAddress')}</Tag>
         // </Box>
+        <Button
+          size="small"
+          loading={isAuthenticating}
+          onClick={() => authenticate()}
+        >
+          Connect
+        </Button>
+      ) : (
         <Button shape="circle" variant="transparent" onClick={() => logout()}>
           <Avatar
-            src={`https://avatars.dicebear.com/api/identicon/${user.id}.svg`}
+            src={`https://avatars.dicebear.com/api/identicon/${user?.id}.svg`}
             label="avatar"
           />
         </Button>

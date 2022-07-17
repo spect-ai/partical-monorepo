@@ -50,7 +50,7 @@ export default class Lit {
       chain,
       authSig,
     });
-
+    console.log({ symmetricKey });
     return symmetricKey;
   }
 
@@ -66,7 +66,7 @@ export default class Lit {
       authSig,
       chain,
     });
-
+    console.log({ encryptedSymmetricKey });
     return encryptedSymmetricKey;
   }
 }

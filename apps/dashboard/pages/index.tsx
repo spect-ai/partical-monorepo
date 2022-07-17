@@ -1,4 +1,4 @@
-import Layout from '../app/common/layout';
+import { Layout } from '@partical/common';
 import Landing from '../app/modules/Landing';
 export function Index() {
   return (

@@ -24,7 +24,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID as string}
         serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL as string}
       >
-        <ParticalClientProvider ceramicClientUri="https://localhost:7007">
+        <ParticalClientProvider ceramicClientUri="http://localhost:7007">
           <ThemeProvider defaultMode="dark" defaultAccent="blue">
             <Component {...pageProps} />
           </ThemeProvider>
