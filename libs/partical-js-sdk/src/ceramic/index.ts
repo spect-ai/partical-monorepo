@@ -2,7 +2,7 @@ import { CeramicClient } from '@ceramicnetwork/http-client';
 import { DID } from 'dids';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import KeyResolver from 'key-did-resolver';
-import { TileDocument } from '@ceramicnetwork/stream-tile';
+import { TileDocument, TileMetadataArgs } from '@ceramicnetwork/stream-tile';
 
 export class Ceramic {
   static ceramicClient: any;
@@ -20,12 +20,20 @@ export class Ceramic {
     this.ceramicClient.did = did;
   }
 
-  static async createStream(content: any, tags: string[], appId: string) {
-    console.log({ content, tags, appId });
-    const doc = await TileDocument.create(this.ceramicClient, content, {
-      tags,
-      family: appId,
-    });
+  static async createSchema(args: TileMetadataArgs, appId: string) {
+    console.log({ args, appId });
+    const doc = await TileDocument.create(this.ceramicClient, args);
+    console.log(doc.id.toString());
+    return doc.id.toString();
+  }
+
+  static async createStream(
+    content: any,
+    args: TileMetadataArgs,
+    appId: string
+  ) {
+    console.log({ content, args, appId });
+    const doc = await TileDocument.create(this.ceramicClient, content, args);
     console.log(doc.id.toString());
     return doc.id.toString();
   }

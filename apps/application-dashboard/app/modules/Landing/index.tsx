@@ -38,9 +38,9 @@ export default function Landing() {
       {isAuthenticated ? (
         <Stack align="center">
           <Stack space="1">
-            <Heading>Your DAOs</Heading>
+            <Heading>Your Applications</Heading>
             <Text variant="label">
-              Choose and import your DAO or create a new one
+              Go to an existing application or create a new one
             </Text>
           </Stack>
           <Box
@@ -49,8 +49,12 @@ export default function Landing() {
             height="96"
           >
             {!loading &&
-              namespaces?.map((dao, index) => (
-                <Link key={dao.id} href={`/entity/${dao.get('entityAddress')}`}>
+              namespaces?.length > 0 &&
+              namespaces?.map((namespace, index) => (
+                <Link
+                  key={namespace.id}
+                  href={`/application/${namespace.get('appId')}`}
+                >
                   <ListContainer
                     paddingY="4"
                     paddingX="8"
@@ -61,7 +65,7 @@ export default function Landing() {
                       <Text weight="semiBold" size="extraLarge">
                         Application {index}
                       </Text>
-                      <Text variant="label">{dao.get('entityAddress')}</Text>
+                      <Text variant="label">{namespace.get('appId')}</Text>
                     </Stack>
                   </ListContainer>
                 </Link>

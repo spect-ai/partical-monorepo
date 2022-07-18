@@ -1,8 +1,10 @@
+import OnChainEntity from '../contract/OnChainEntity';
+import { Indexor } from '../indexor';
+import { generateKey } from '../utils';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { NamespaceMetadata } from 'libs/partical-js-sdk/types';
 import { v4 as uuidv4 } from 'uuid';
-import { Indexor } from '../indexor';
-import { generateKey } from '../utils';
+
 export class Namespace {
   static async create(appName: string): Promise<{
     key: string;
@@ -10,7 +12,9 @@ export class Namespace {
   }> {
     const key = generateKey();
     console.log({ key });
+    /** Update entity's on chain uri with new ipfs uri */
     const appId = uuidv4();
+    console.log('On chain entity created');
     await Indexor.addIndex('Namespace', {
       appName,
       key,

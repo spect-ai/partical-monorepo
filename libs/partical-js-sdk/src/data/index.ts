@@ -18,7 +18,7 @@ export class Data {
       console.log('symmetricKey', symmetricKey);
       /** Authenticate using symmetric key and create key did */
       await Ceramic.authenticate(symmetricKey);
-      const streamId = await Ceramic.createStream(data, tags, appId);
+      const streamId = await Ceramic.createStream(data, { tags }, appId);
       await Indexor.addIndex('StreamIndexer', {
         streamId,
         entityAddress,

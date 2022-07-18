@@ -30,19 +30,8 @@ export default class Lit {
   ): Promise<Uint8Array> {
     const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
 
-    const accessControlConditions = [
-      {
-        contractAddress: entityAddress,
-        standardContractType,
-        chain,
-        method: 'balanceOf',
-        parameters: [':userAddress', '0'],
-        returnValueTest: {
-          comparator: '>',
-          value: '0',
-        },
-      },
-    ];
+    const accessControlConditions =
+      Lit.basicAccessControlCondition(entityAddress);
     console.log(encryptedSymmetricKey);
     const symmetricKey = await client.getEncryptionKey({
       accessControlConditions,
@@ -68,5 +57,52 @@ export default class Lit {
     });
     console.log({ encryptedSymmetricKey });
     return encryptedSymmetricKey;
+  }
+
+  static basicAccessControlCondition(entityAddress: string): object[] {
+    return [
+      {
+        contractAddress: entityAddress,
+        standardContractType,
+        chain,
+        method: 'balanceOf',
+        parameters: [':userAddress', '0'],
+        returnValueTest: {
+          comparator: '>',
+          value: '0',
+        },
+      },
+    ];
+  }
+
+  static applicationAccessControlCondition(
+    applicationAddress: string,
+    entityAddress: string
+  ): object[] {
+    return [
+      {
+        contractAddress: applicationAddress,
+        standardContractType,
+        chain,
+        method: 'balanceOf',
+        parameters: [':userAddress', '0'],
+        returnValueTest: {
+          comparator: '>',
+          value: '0',
+        },
+      },
+      { operator: 'and' },
+      {
+        contractAddress: entityAddress,
+        standardContractType,
+        chain,
+        method: 'balanceOf',
+        parameters: [applicationAddress, '0'],
+        returnValueTest: {
+          comparator: '>',
+          value: '0',
+        },
+      },
+    ];
   }
 }

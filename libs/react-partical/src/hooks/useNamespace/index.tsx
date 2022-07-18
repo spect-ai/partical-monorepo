@@ -4,7 +4,7 @@ import React from 'react';
 export function useNamespace() {
   const getNamespacesByUser = React.useCallback(async (userAddress: string) => {
     if (!userAddress) return;
-    const res = await Namespace.get(userAddress);
+    const res = await Namespace.getByUser(userAddress);
     return res;
   }, []);
 
@@ -14,13 +14,10 @@ export function useNamespace() {
     return res;
   }, []);
 
-  const createNamespace = React.useCallback(
-    async (appName: string, userAddress: string) => {
-      const res = await Namespace.create(appName);
-      return res;
-    },
-    []
-  );
+  const createNamespace = React.useCallback(async (appName: string) => {
+    const res = await Namespace.create(appName);
+    return res;
+  }, []);
 
   return {
     getNamespacesByUser,

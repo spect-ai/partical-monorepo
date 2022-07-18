@@ -7,6 +7,7 @@ import Lit from '../lit';
 import { Ceramic } from '../ceramic';
 import { storeMetadata } from '../utils';
 import { Indexor } from '../indexor';
+import { Schema } from '../schema';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const LitJsSdk = require('lit-js-sdk');
 
@@ -17,6 +18,17 @@ export class Entity {
     if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
   }
 
+  private static async _generateKeyAndAuthenticate(address: string) {
+    const { symmetricKey }: any = await Lit.checkAndSignAuthMessage('encrypt');
+    const encryptedKey = await Lit.saveKey(
+      Lit.basicAccessControlCondition(address),
+      symmetricKey
+    );
+    await Ceramic.initialize('http://localhost:7007'); // client not available have
+    await Ceramic.authenticate(symmetricKey);
+    return encryptedKey;
+  }
+
   static async create(userAddress: string, name: string) {
     try {
       /** Create entity on chain using factory contract */
@@ -25,38 +37,20 @@ export class Entity {
       const entityAddress = data.events[1].args.entity;
       OnChainEntity.initContract(entityAddress);
 
-      /** Create symmetric to be used as seed for ceramic key controller */
-      const { symmetricKey }: any = await Lit.checkAndSignAuthMessage(
-        'encrypt'
+      const encryptedKey = await Entity._generateKeyAndAuthenticate(
+        entityAddress
       );
-      /** Authenticate using symmetric key and create key did */
-      await Ceramic.initialize('http://localhost:7007'); // client not available have
-      await Ceramic.authenticate(symmetricKey);
+
       const streamId = await Ceramic.createStream(
         {
           contractAddress: entityAddress,
           appData: [],
         },
-        ['entity'],
+        { tags: ['entity'] },
         'partical-main'
       );
       console.log(`streamId: ${streamId}`);
-      const encryptedKey = await Lit.saveKey(
-        [
-          {
-            contractAddress: entityAddress,
-            standardContractType,
-            chain,
-            method: 'balanceOf',
-            parameters: [':userAddress', '0'],
-            returnValueTest: {
-              comparator: '>',
-              value: '0',
-            },
-          },
-        ],
-        symmetricKey
-      );
+
       /** Update entity's on chain uri with new ipfs uri */
       const url = await storeMetadata(
         name,
@@ -122,24 +116,22 @@ export class Entity {
       EntityABI.abi
     );
 
-    const EntityMapping = Moralis.Object.extend('EntityMapping');
-    const query = new Moralis.Query(EntityMapping);
-    query.equalTo('entityAddress', entityAddress);
-    const results = await query.find();
+    const result = await Indexor.queryOneIndex('EntityMapping', {
+      entityAddress,
+    });
+    if (!result) {
+      throw new Error('Entity not found');
+    }
 
-    const entityMapping = new EntityMapping();
-
-    entityMapping.set('entityAddress', entityAddress);
-    entityMapping.set(
-      'encryptedSymmetricKey',
-      results[0].get('encryptedSymmetricKey')
-    );
-    entityMapping.set('url', results[0].get('url'));
-    entityMapping.set('streamId', results[0].get('streamId'));
-    entityMapping.set('userAddress', userAddress.toLowerCase());
-
-    await entityMapping.save();
+    const mappedEntity = await Indexor.addIndex('EntityMapping', {
+      entityAddress,
+      userAddress: userAddress.toLowerCase(),
+      encryptedSymmetricKey: result.get('encryptedSymmetricKey'),
+      streamId: result.get('streamId'),
+      url: result.get('url'),
+    });
     console.log({ res });
+
     return res;
   }
 }
