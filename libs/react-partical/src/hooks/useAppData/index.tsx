@@ -1,4 +1,4 @@
-import { Data, Indexor, Schema } from '@partical/partical-js-sdk';
+import { Data, Indexor } from '@partical/partical-js-sdk';
 import { useState } from 'react';
 
 type Props = {

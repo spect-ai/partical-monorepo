@@ -36,10 +36,32 @@ export function useEntity() {
     []
   );
 
+  const hasAccess = React.useCallback(
+    async (userAddress: string, entityAddress: string) => {
+      if (!userAddress) return;
+      setloading(true);
+      const res = await Entity.hasAccess(entityAddress, userAddress);
+      setloading(false);
+      return res;
+    },
+    []
+  );
+
+  const getEntityData = React.useCallback(async (userAddress: string) => {
+    if (!userAddress) return;
+    setloading(true);
+    const res = await Entity.getEntityData(userAddress);
+    setloading(false);
+    console.log({ res });
+    return res;
+  }, []);
+
   return {
     getMyEntity,
     createEntity,
     giveAccess,
+    hasAccess,
+    getEntityData,
     entities,
     loading,
   };

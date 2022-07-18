@@ -3,6 +3,7 @@ import { AppProps } from 'next/app';
 import { MoralisProvider } from 'react-moralis';
 import { ParticalClientProvider } from '@partical/react-partical';
 import 'degen/styles';
+import './styles.css';
 
 import '@fontsource/inter/300.css';
 import '@fontsource/inter/400.css';

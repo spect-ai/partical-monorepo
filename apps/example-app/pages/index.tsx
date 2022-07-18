@@ -1,13 +1,12 @@
-import { Box, Button, Heading, Stack } from 'degen';
+import { Box, Button, Stack } from 'degen';
 import { useMoralis } from 'react-moralis';
 import Grant from '../components/Grant';
-import Header from '../components/Header';
 import { Container, Row, Col } from 'react-grid-system';
 import Link from 'next/link';
 import { useAppData } from '@partical/react-partical';
 import { useEffect } from 'react';
 import { GrantData } from './createGrant';
-import { Layout } from '@partical/common';
+import { Layout, Loader } from '@partical/common';
 
 export function Index() {
   const { loading, getAppData, appData } = useAppData<GrantData>({
@@ -20,6 +19,7 @@ export function Index() {
     if (isInitialized) {
       void getAppData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInitialized]);
 
   console.log({ appData });
@@ -27,6 +27,7 @@ export function Index() {
   return (
     <Layout>
       <Box paddingX="64">
+        <Loader loading={loading} text="Fetching" />
         <Box padding="4">
           <Stack direction="horizontal" justify="space-between">
             <Box />

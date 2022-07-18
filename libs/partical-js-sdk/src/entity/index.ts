@@ -110,26 +110,20 @@ export class Entity {
     return entities;
   }
 
-  // static async getAppData(entityAddress: string) {
-  //   Ceramic.initialize();
+  static async getEntityData(entityAddress: string) {
+    const streams = await Indexor.queryIndex('StreamIndexer', {
+      entityAddress,
+    });
+    const data: {
+      [key: string]: any;
+    } = await Ceramic.getMultipleStreams(streams.map((s) => s.get('streamId')));
 
-  //   const entities = await Indexor.queryIndex('EntityMapping', {
-  //     entityAddress,
-  //   });
-
-  //   const baseData = await Ceramic.getStream(entities[0].get('streamId'));
-  //   const appStreamObj = await Ceramic.getMultipleStreams(baseData.appData);
-
-  //   const appData = Object.keys(appStreamObj).map((key) => {
-  //     const stream = appStreamObj[key];
-  //     const content = stream.content as any;
-  //     return { ...content, streamId: key };
-  //   });
-  //   return {
-  //     ...baseData,
-  //     appData,
-  //   };
-  // }
+    // // return only content from the data
+    // return Object.keys(data).map((stream) => {
+    //   return data[stream].content;
+    // });
+    return data;
+  }
 
   static async giveAccess(entityAddress: string, userAddress: string) {
     const res = await mintAccessToken(
@@ -155,5 +149,16 @@ export class Entity {
     console.log({ res });
 
     return res;
+  }
+
+  static async hasAccess(entityAddress: string, userAddress: string) {
+    const result = await Indexor.queryOneIndex('EntityMapping', {
+      entityAddress,
+      userAddress: userAddress.toLowerCase(),
+    });
+    if (!result) {
+      return false;
+    }
+    return true;
   }
 }
