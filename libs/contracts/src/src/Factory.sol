@@ -4,14 +4,12 @@ pragma solidity ^0.8.13;
 import "./Entity.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
-
 contract Factory is ERC1155Holder {
     address[] entities;
     mapping(address=>Entity) public entityMapping;
     event EntityCreated(address entity);
 
-    constructor() {
-    }
+    constructor() {}
 
     function createEntity(string memory uri) public returns (address) {
         Entity entity = new Entity(uri, msg.sender);
