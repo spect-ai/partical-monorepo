@@ -3,7 +3,9 @@ import { Ceramic } from '../ceramic';
 import { Indexor } from '../indexor';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 import Moralis from 'moralis';
-
+import { v4 as uuidv4 } from 'uuid';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const LitJsSdk = require('lit-js-sdk');
 export class Schema {
   static async create(
     $schema: any,
@@ -13,13 +15,35 @@ export class Schema {
     appId: string,
     required: string[]
   ): Promise<boolean> {
-    await Indexor.addIndex('Schema', {
-      $schema,
-      title,
-      type,
-      properties,
+    const namespace = await Indexor.queryOneIndex('Namespace', {
       appId,
-      required,
+    });
+    if (!namespace) {
+      return false;
+    }
+    const symmetricKey = await Lit.descryptKey(
+      namespace.get('encryptedSymmetricKey'),
+      namespace.get('entityAddress')
+    );
+    /** Authenticate using symmetric key and create key did */
+    await Ceramic.authenticate(symmetricKey);
+    const streamId = Ceramic.createStream(
+      {
+        $schema,
+        title,
+        type,
+        properties,
+        appId,
+        required,
+      },
+      {
+        tags: [appId],
+        family: appId,
+      }
+    );
+    await Indexor.addIndex('Schema', {
+      streamId,
+      appId,
     });
 
     return true;
@@ -62,43 +86,5 @@ export class Schema {
         required: result.get('required'),
       };
     });
-  }
-
-  static async addToCeramic(
-    entityAddress: string,
-    appId: string,
-    schemaIds?: string[]
-  ): Promise<string[]> {
-    let appSchemas = [];
-    if (schemaIds) appSchemas = await Schema.get(schemaIds);
-    else appSchemas = await Schema.getByAppId(appId);
-
-    if (!appSchemas) return [];
-
-    const entity = await Indexor.queryOneIndex('EntityMapping', {
-      entityAddress,
-    });
-    if (!entity) {
-      throw new Error('Entity not found');
-    }
-
-    Ceramic.authenticate(
-      await Lit.descryptKey(entity.get('encryptedSymmetricKey'), entityAddress)
-    );
-
-    const streamIds = [];
-    for (const schema of appSchemas) {
-      const streamId = await Ceramic.createSchema(
-        { schema: schema, tags: [appId] },
-        appId
-      );
-      Indexor.addIndex('StreamIndexor', {
-        streamId,
-        appId,
-        entityAddress,
-      });
-      streamIds.push(streamId);
-    }
-    return streamIds;
   }
 }

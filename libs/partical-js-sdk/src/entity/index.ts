@@ -21,7 +21,19 @@ export class Entity {
   private static async _generateKeyAndAuthenticate(address: string) {
     const { symmetricKey }: any = await Lit.checkAndSignAuthMessage('encrypt');
     const encryptedKey = await Lit.saveKey(
-      Lit.basicAccessControlCondition(address),
+      [
+        {
+          contractAddress: address,
+          standardContractType,
+          chain,
+          method: 'balanceOf',
+          parameters: [':userAddress', '0'],
+          returnValueTest: {
+            comparator: '>',
+            value: '0',
+          },
+        },
+      ],
       symmetricKey
     );
     await Ceramic.initialize('http://localhost:7007'); // client not available have
@@ -29,40 +41,50 @@ export class Entity {
     return encryptedKey;
   }
 
+  static async createCommon(name: string) {
+    console.log('Creating entity ..');
+    const data = await OnChainEntity.create('');
+    const entityAddress = data.events[1].args.entity;
+    OnChainEntity.initContract(entityAddress);
+
+    const encryptedKey = await Entity._generateKeyAndAuthenticate(
+      entityAddress
+    );
+
+    const streamId = await Ceramic.createStream(
+      {
+        contractAddress: entityAddress,
+        appData: [],
+      },
+      { tags: ['entity'] }
+    );
+    console.log(`streamId: ${streamId}`);
+
+    /** Update entity's on chain uri with new ipfs uri */
+    const url = await storeMetadata(
+      name,
+      LitJsSdk.uint8arrayToString(encryptedKey, 'base16'),
+      streamId
+    );
+    console.log({ url });
+
+    /** Update entity's on chain uri with new ipfs uri */
+    await OnChainEntity.update(url);
+    console.log('On chain entity created');
+
+    return {
+      entityAddress,
+      url,
+      streamId,
+      encryptedKey,
+    };
+  }
+
   static async create(userAddress: string, name: string) {
     try {
       /** Create entity on chain using factory contract */
-      console.log('Creating entity ..');
-      const data = await OnChainEntity.create('');
-      const entityAddress = data.events[1].args.entity;
-      OnChainEntity.initContract(entityAddress);
-
-      const encryptedKey = await Entity._generateKeyAndAuthenticate(
-        entityAddress
-      );
-
-      const streamId = await Ceramic.createStream(
-        {
-          contractAddress: entityAddress,
-          appData: [],
-        },
-        { tags: ['entity'] },
-        'partical-main'
-      );
-      console.log(`streamId: ${streamId}`);
-
-      /** Update entity's on chain uri with new ipfs uri */
-      const url = await storeMetadata(
-        name,
-        LitJsSdk.uint8arrayToString(encryptedKey, 'base16'),
-        streamId
-      );
-      console.log({ url });
-
-      /** Update entity's on chain uri with new ipfs uri */
-      await OnChainEntity.update(url);
-      console.log('On chain entity created');
-
+      const { entityAddress, url, streamId, encryptedKey } =
+        await Entity.createCommon(name);
       /** Add index in moralis for entity */
       return await Indexor.addIndex('EntityMapping', {
         entityAddress,

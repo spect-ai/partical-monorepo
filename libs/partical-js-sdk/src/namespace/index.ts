@@ -4,7 +4,9 @@ import { generateKey } from '../utils';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { NamespaceMetadata } from 'libs/partical-js-sdk/types';
 import { v4 as uuidv4 } from 'uuid';
-
+import { Entity } from '../entity';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const LitJsSdk = require('lit-js-sdk');
 export class Namespace {
   static async create(appName: string): Promise<{
     key: string;
@@ -12,6 +14,8 @@ export class Namespace {
   }> {
     const key = generateKey();
     console.log({ key });
+    const { entityAddress, url, streamId, encryptedKey } =
+      await Entity.createCommon(appName);
     /** Update entity's on chain uri with new ipfs uri */
     const appId = uuidv4();
     console.log('On chain entity created');
@@ -19,6 +23,12 @@ export class Namespace {
       appName,
       key,
       appId,
+      streamId,
+      entityAddress,
+      encryptedSymmetricKey: LitJsSdk.uint8arrayToString(
+        encryptedKey,
+        'base16'
+      ),
     });
 
     return {
@@ -28,10 +38,12 @@ export class Namespace {
   }
 
   static async get(appId: string): Promise<NamespaceMetadata> {
-    // TODO filter keys for unauthorized users
+    console.log({ appId });
+
     const result = await Indexor.queryOneIndex('Namespace', {
       appId,
     });
+    console.log({ result });
     if (!result) {
       return {} as NamespaceMetadata;
     }

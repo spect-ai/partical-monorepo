@@ -37,18 +37,9 @@ export function useSchema() {
     []
   );
 
-  const addToCeramic = React.useCallback(
-    async (entityAddress: string, appId: string, schemaIds?: string[]) => {
-      const res = await Schema.addToCeramic(entityAddress, appId, schemaIds);
-      return res;
-    },
-    []
-  );
-
   return {
     getSchemas,
     getSchemaByApp,
     createSchema,
-    addToCeramic,
   };
 }

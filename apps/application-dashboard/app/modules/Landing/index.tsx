@@ -74,7 +74,7 @@ export default function Landing() {
           <Button
             onClick={() => {
               console.log('create');
-              createNamespace(user?.get('ethAddress'), 'My app');
+              createNamespace('My app');
             }}
             prefix={<IconPlus />}
             center

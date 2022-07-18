@@ -1,4 +1,4 @@
-import { Data, Indexor } from '@partical/partical-js-sdk';
+import { Data, Indexor, Schema } from '@partical/partical-js-sdk';
 import { useState } from 'react';
 
 type Props = {
@@ -22,22 +22,38 @@ export function useAppData<T>({ appId }: Props) {
     setLoading(false);
   };
 
-  const createAppData = async (data: T, entityAddress: string) => {
+  const createAppData = async (
+    data: T,
+    entityAddress: string,
+    fromSchema?: string,
+    schemaId?: string
+  ) => {
     setLoading(true);
+    let schemaStreamId;
     try {
+      if (fromSchema) {
+        const schema = await Indexor.queryOneIndex('Schema', { schemaId });
+        schemaStreamId = schema?.get('streamId');
+      }
       const entity = await Indexor.queryIndex('EntityMapping', {
         entityAddress,
       });
+      console.log({ entityAddress });
       const streamId = await Data.createData<T>(
         data,
         appId,
         ['Grant', 'Gitcoin'],
         entityAddress,
-        entity[0].get('encryptedSymmetricKey')
+        entity[0].get('encryptedSymmetricKey'),
+        schemaStreamId
       );
+      // const streamIds = await Schema.addToCeramic(entityAddress, appId);
+      // updateAppData(streamIds[0], data, entityAddress);
       console.log({ streamId });
+      return streamId;
     } catch (e) {
       setError('Error creating data');
+      return false;
     }
     setLoading(false);
   };

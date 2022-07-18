@@ -10,6 +10,7 @@ export function useNamespace() {
 
   const getNamespace = React.useCallback(async (appId: string) => {
     if (!appId) return;
+    console.log({ appId });
     const res = await Namespace.get(appId);
     return res;
   }, []);

@@ -1,13 +1,15 @@
 import Lit from '../lit';
 import { Ceramic } from '../ceramic';
 import { Indexor } from '../indexor';
+import { TileMetadataArgs } from '@ceramicnetwork/stream-tile';
 export class Data {
   static async createData<T>(
     data: T,
     appId: string,
     tags: string[],
     entityAddress: string,
-    encryptedSymmetricKey: string
+    encryptedSymmetricKey: string,
+    schemaStreamId?: string
   ): Promise<string | undefined> {
     try {
       console.log({ encryptedSymmetricKey, entityAddress });
@@ -15,10 +17,17 @@ export class Data {
         encryptedSymmetricKey,
         entityAddress
       );
-      console.log('symmetricKey', symmetricKey);
+      console.log('schemaStreamId', schemaStreamId);
       /** Authenticate using symmetric key and create key did */
       await Ceramic.authenticate(symmetricKey);
-      const streamId = await Ceramic.createStream(data, { tags }, appId);
+      let args: TileMetadataArgs = { tags };
+      if (schemaStreamId)
+        args = {
+          ...args,
+          schema: await Ceramic.getCommit(schemaStreamId),
+          family: appId,
+        };
+      const streamId = await Ceramic.createStream(data, args);
       await Indexor.addIndex('StreamIndexer', {
         streamId,
         entityAddress,

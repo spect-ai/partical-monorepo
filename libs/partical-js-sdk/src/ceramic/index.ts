@@ -18,21 +18,11 @@ export class Ceramic {
     await did.authenticate();
     console.log(did);
     this.ceramicClient.did = did;
+    return did;
   }
 
-  static async createSchema(args: TileMetadataArgs, appId: string) {
-    console.log({ args, appId });
-    const doc = await TileDocument.create(this.ceramicClient, args);
-    console.log(doc.id.toString());
-    return doc.id.toString();
-  }
-
-  static async createStream(
-    content: any,
-    args: TileMetadataArgs,
-    appId: string
-  ) {
-    console.log({ content, args, appId });
+  static async createStream(content: any, args?: TileMetadataArgs) {
+    console.log({ content, args });
     const doc = await TileDocument.create(this.ceramicClient, content, args);
     console.log(doc.id.toString());
     return doc.id.toString();
@@ -67,7 +57,8 @@ export class Ceramic {
     return await this.ceramicClient.multiQuery(queries);
   }
 
-  static async getCommit(stream: any) {
-    return stream;
+  static async getCommit(streamId: string) {
+    const doc = await TileDocument.load(this.ceramicClient, streamId);
+    return doc.commitId.toString();
   }
 }
