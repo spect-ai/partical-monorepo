@@ -4,13 +4,13 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nrwl/node:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/partical-js-sdk",
         "main": "libs/partical-js-sdk/src/index.ts",
         "tsConfig": "libs/partical-js-sdk/tsconfig.lib.json",
-        "assets": ["libs/partical-js-sdk/*.md"]
+        "generatePackageJson": true
       }
     },
     "publish": {
