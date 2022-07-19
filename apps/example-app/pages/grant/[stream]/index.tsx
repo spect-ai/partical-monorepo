@@ -17,7 +17,9 @@ const GrantCover = styled(GrantImage)`
 export function Stream() {
   const router = useRouter();
   const { stream } = router.query;
-  const { streamData, loading } = useStream<GrantData>(stream as string);
+  const { streamData, loading, getData } = useStream<GrantData>(
+    stream as string
+  );
   return (
     <Layout>
       {loading && <Loader loading text="Loading..." />}
@@ -41,7 +43,11 @@ export function Stream() {
               </Text>
               <Stack direction="horizontal">
                 <Heading>{streamData.title}</Heading>
-                <UpdateGrant grant={streamData} streamId={stream as string} />
+                <UpdateGrant
+                  grant={streamData}
+                  streamId={stream as string}
+                  getData={getData}
+                />
               </Stack>
               <Box borderTopWidth="0.375" borderBottomWidth="0.375">
                 <Container>
@@ -50,13 +56,13 @@ export function Stream() {
                       <Text>{streamData.website}</Text>
                     </Col>
                     <Col xs={6} style={{ padding: '1rem' }}>
-                      <Text>{smartTrim(streamData.fundAddress, 12)}</Text>
+                      <Text>{smartTrim(streamData.fundingAddress, 12)}</Text>
                     </Col>
                     <Col xs={6} style={{ padding: '1rem' }}>
-                      <Text>{streamData.twitter}</Text>
+                      <Text>{'@joinSpect'}</Text>
                     </Col>
                     <Col xs={6} style={{ padding: '1rem' }}>
-                      <Text>{streamData.github}</Text>
+                      <Text>{'https://github.com/spect-ai/tribes.v1'}</Text>
                     </Col>
                   </Row>
                 </Container>

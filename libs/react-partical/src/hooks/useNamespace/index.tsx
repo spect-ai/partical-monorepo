@@ -48,12 +48,20 @@ export function useNamespace() {
     []
   );
 
+  const updateApp = React.useCallback(async (schema: any, appId: string) => {
+    setLoading(true);
+    const res = await Namespace.updateApp(schema, appId);
+    setLoading(false);
+    return res;
+  }, []);
+
   return {
     getNamespacesByUser,
     getNamespace,
     getAllNamespaces,
     createNamespace,
     createApp,
+    updateApp,
     loading,
   };
 }

@@ -10,14 +10,15 @@ import { GrantData } from '../pages/createGrant';
 interface props {
   grant: GrantData;
   streamId: string;
+  getData: () => void;
 }
 
-export default function UpdateGrant({ grant, streamId }: props) {
+export default function UpdateGrant({ grant, streamId, getData }: props) {
   const router = useRouter();
   const { stream } = router.query;
-  const { canEditStream, setStreamData } = useStream(stream as string);
+  const { canEditStream } = useStream(stream as string);
   const { updateAppData, loading } = useAppData<GrantData>({
-    appId: 'wTao5gHcMP8wEoVROtMNZ3Iz',
+    appId: '3beca601-c602-453e-827b-a24f0ccff978',
   });
   const { user } = useMoralis();
   const [canEdit, setCanEdit] = useState(false);
@@ -81,7 +82,7 @@ export default function UpdateGrant({ grant, streamId }: props) {
                       grant.entityAddress
                     );
                     if (res) {
-                      setStreamData(res);
+                      getData();
                       setIsOpen(false);
                     }
                   }}

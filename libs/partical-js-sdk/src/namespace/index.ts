@@ -35,6 +35,27 @@ export class Namespace {
     });
   }
 
+  static async updateApp(schema: any, appId: string) {
+    const app = await Indexor.queryOneIndex('Namespace', {
+      appId,
+    });
+
+    await Ceramic.authenticate(
+      Uint8Array.from(Object.entries(app?.get('seed')) as any)
+    );
+    const schemaCommit = await Ceramic.createSchema(schema);
+    await Indexor.updateOneIndex(
+      'Namespace',
+      {
+        appId,
+      },
+      {
+        schema: JSON.stringify(schema),
+        schemaCommit,
+      }
+    );
+  }
+
   static async create(appName: string): Promise<{
     key: string;
     appId: string;

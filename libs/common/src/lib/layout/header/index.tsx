@@ -12,6 +12,7 @@ export default function Header() {
       display="flex"
       justifyContent="space-between"
       paddingTop="4"
+      paddingBottom="4"
       paddingX="8"
     >
       <Box></Box>

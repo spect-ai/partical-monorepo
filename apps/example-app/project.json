@@ -26,7 +26,8 @@
       "configurations": {
         "development": {
           "buildTarget": "example-app:build:development",
-          "dev": true
+          "dev": true,
+          "port": 3000
         },
         "production": {
           "buildTarget": "example-app:build:production",
