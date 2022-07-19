@@ -29,6 +29,7 @@
     "react-dom": "18.2.0",
     "react-grid-system": "^8.1.5",
     "react-is": "18.2.0",
+    "react-json-view": "^1.21.3",
     "react-moralis": "^1.4.0",
     "regenerator-runtime": "0.13.7",
     "styled-components": "5.3.5",

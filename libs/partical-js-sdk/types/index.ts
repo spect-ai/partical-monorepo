@@ -24,3 +24,23 @@ export type Entity = {
   userAddress: string;
   encryptedSymmetricKey: string;
 };
+
+export interface MoralisNamespace {
+  appId: string;
+  appName: string;
+  key: string;
+  schemaName: string;
+  _id: string;
+  _createdAt: string;
+  _updatedAt: string;
+}
+
+export interface MoralisStream {
+  appId: string;
+  createdAt: string;
+  entityAddress: string;
+  namespace: MoralisNamespace[];
+  objectId: string;
+  streamId: string;
+  updatedAt: string;
+}
