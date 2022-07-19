@@ -11,9 +11,8 @@ export default function Header() {
       width="full"
       display="flex"
       justifyContent="space-between"
-      padding="4"
+      paddingTop="4"
       paddingX="8"
-      height="28"
     >
       <Box></Box>
       {!isAuthenticated ? (
@@ -28,7 +27,12 @@ export default function Header() {
           Connect
         </Button>
       ) : (
-        <Button shape="circle" variant="transparent" onClick={() => logout()}>
+        <Button
+          shape="circle"
+          variant="transparent"
+          onClick={() => logout()}
+          size="small"
+        >
           <Avatar
             src={`https://avatars.dicebear.com/api/identicon/${user?.id}.svg`}
             label="avatar"

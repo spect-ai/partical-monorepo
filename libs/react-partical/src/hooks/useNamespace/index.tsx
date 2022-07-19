@@ -1,7 +1,8 @@
 import { Namespace } from '@partical/partical-js-sdk';
-import React from 'react';
+import React, { useState } from 'react';
 
 export function useNamespace() {
+  const [loading, setLoading] = useState(false);
   const getNamespacesByUser = React.useCallback(async (userAddress: string) => {
     if (!userAddress) return;
     const res = await Namespace.getByUser(userAddress);
@@ -20,9 +21,39 @@ export function useNamespace() {
     return res;
   }, []);
 
+  const getAllNamespaces = React.useCallback(async () => {
+    setLoading(true);
+    const res = await Namespace.getAll();
+    setLoading(false);
+    return res;
+  }, []);
+
+  const createApp = React.useCallback(
+    async (
+      name: string,
+      description: string,
+      schema: any,
+      userAddress: string
+    ) => {
+      setLoading(true);
+      const res = await Namespace.createApp(
+        name,
+        description,
+        schema,
+        userAddress
+      );
+      setLoading(false);
+      return res;
+    },
+    []
+  );
+
   return {
     getNamespacesByUser,
     getNamespace,
+    getAllNamespaces,
     createNamespace,
+    createApp,
+    loading,
   };
 }

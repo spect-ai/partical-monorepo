@@ -1,9 +1,11 @@
 export type NamespaceMetadata = {
   objectId: string;
   appName: string;
-  schemaName: string;
-  key?: string;
+  schema: any;
   appId: string;
+  schemaCommit: string;
+  description: string;
+  seed: any;
 };
 
 export type StreamIndex = {

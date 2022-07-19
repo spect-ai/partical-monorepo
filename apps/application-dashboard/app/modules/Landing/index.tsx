@@ -4,6 +4,11 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useMoralis, useMoralisQuery } from 'react-moralis';
 import styled from 'styled-components';
+import dynamic from 'next/dynamic';
+
+const CreateApp = dynamic(() => import('../createApp'), {
+  ssr: false,
+});
 
 const ListContainer = styled(Box)`
   cursor: pointer;
@@ -71,7 +76,7 @@ export default function Landing() {
                 </Link>
               ))}
           </Box>
-          <Button
+          {/* <Button
             onClick={() => {
               console.log('create');
               createNamespace('My app');
@@ -81,7 +86,8 @@ export default function Landing() {
             variant="tertiary"
           >
             Create new App
-          </Button>
+          </Button> */}
+          <CreateApp />
         </Stack>
       ) : (
         <Stack align="center" space="8">

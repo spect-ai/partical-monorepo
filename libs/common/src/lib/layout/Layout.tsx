@@ -7,13 +7,15 @@ import Header from './header';
 
 type Props = {
   children: ReactNodeNoStrings;
+  header?: ReactNodeNoStrings;
+  footer?: ReactNodeNoStrings;
 };
 
 const Container = styled(Box)`
   flex-grow: 1;
 `;
 
-export default function Layout({ children }: Props) {
+export default function Layout({ children, header, footer }: Props) {
   return (
     <Box
       backgroundColor="background"
@@ -26,9 +28,9 @@ export default function Layout({ children }: Props) {
       }}
       id="public-layout"
     >
-      <Header />
+      {header ? header : <Header />}
       <Container>{children}</Container>
-      <Footer />
+      {footer ? footer : <Footer />}
     </Box>
   );
 }
