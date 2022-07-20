@@ -48,6 +48,26 @@ export function useNamespace() {
     []
   );
 
+  const createView = React.useCallback(
+    async (
+      name: string,
+      description: string,
+      resolver: any,
+      userAddress: string
+    ) => {
+      setLoading(true);
+      const res = await Namespace.createView(
+        name,
+        description,
+        resolver,
+        userAddress
+      );
+      setLoading(false);
+      return res;
+    },
+    []
+  );
+
   const updateApp = React.useCallback(async (schema: any, appId: string) => {
     setLoading(true);
     const res = await Namespace.updateApp(schema, appId);
@@ -61,6 +81,7 @@ export function useNamespace() {
     getAllNamespaces,
     createNamespace,
     createApp,
+    createView,
     updateApp,
     loading,
   };

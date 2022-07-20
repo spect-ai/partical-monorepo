@@ -1,8 +1,9 @@
 import { Accordian } from '@partical/common';
 import { useNamespace } from '@partical/react-partical';
-import { Box, Button, Heading, Stack, Text } from 'degen';
+import { Box, Button, Heading, Stack, Tag, Text } from 'degen';
 import React, { useState } from 'react';
 import ReactJson from 'react-json-view';
+import { toast } from 'react-toastify';
 
 type Props = {
   app: any;
@@ -10,7 +11,7 @@ type Props = {
 };
 
 export default function AppData({ app, editable }: Props) {
-  console.log({ editable });
+  console.log({ app });
   const { updateApp, loading } = useNamespace();
 
   const [data, setdata] = useState(app.schema);
@@ -18,12 +19,22 @@ export default function AppData({ app, editable }: Props) {
     <Box>
       <Accordian name={<Heading>{app.appName}</Heading>} defaultOpen>
         <Stack>
-          <Text>{app.description}</Text>
-          <Text>{app.schemaCommit}</Text>
+          <Text variant="label">{app.description}</Text>
+          <Box
+            cursor="pointer"
+            onClick={() => {
+              navigator.clipboard.writeText(app.appId);
+              toast('Copied to clipboard', {
+                theme: 'dark',
+              });
+            }}
+          >
+            <Tag hover>{app.appId}</Tag>
+          </Box>
           <ReactJson
-            src={app.schema}
+            src={app.schema || app.resolver}
             theme="chalk"
-            collapsed={2}
+            collapsed={app.isView ? 3 : 2}
             onEdit={
               editable
                 ? (e) => {
@@ -46,16 +57,22 @@ export default function AppData({ app, editable }: Props) {
                 : undefined
             }
           />
-          <Button
-            loading={loading}
-            size="small"
-            onClick={async () => {
-              const res = await updateApp(data, app.appId);
-              console.log({ res });
-            }}
-          >
-            Save
-          </Button>
+          <Box margin="2">
+            <Stack direction="horizontal">
+              {editable && (
+                <Button
+                  loading={loading}
+                  size="small"
+                  onClick={async () => {
+                    const res = await updateApp(data, app.appId);
+                    console.log({ res });
+                  }}
+                >
+                  Save
+                </Button>
+              )}
+            </Stack>
+          </Box>
         </Stack>
       </Accordian>
     </Box>

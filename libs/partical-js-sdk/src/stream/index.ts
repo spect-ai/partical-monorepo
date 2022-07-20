@@ -138,55 +138,89 @@ export class StreamData extends Base {
     return data;
   }
 
-  async createDataFromSchema(content: {
-    name: string;
-    description: string;
-    logo: string;
-    twitter: string;
-    facebook: string;
-    instagram: string;
-    fundingAddress: string;
-  }) {
-    interface Schema {
-      [appId: string]: string[];
-    }
+  // async createDataFromSchema(content: {
+  //   name: string;
+  //   description: string;
+  //   logo: string;
+  //   twitter: string;
+  //   facebook: string;
+  //   instagram: string;
+  //   fundingAddress: string;
+  // }) {
+  //   interface Schema {
+  //     [appId: string]: {
+  //       name: string;
+  //       alias: string;
+  //     }[];
+  //   }
 
-    // object to store the appid and the columns it uses from the schema
-    const dependencyResolver: Schema = {
-      appId1: ['name', 'description', 'logo'],
-      appId2: ['twitter', 'facebook', 'instagram'],
-      appId3: ['fundingAddress'],
-    };
+  //   // object to store the appid and the columns it uses from the schema
 
-    // create a new ceramic client
-    const ceramic = new CeramicClient('http://localhost:7007');
+  //   // create a new ceramic client
+  //   const ceramic = new CeramicClient('http://localhost:7007');
 
-    // create a tile document for each app which contains data required by the app
-    const appIds = Object.keys(dependencyResolver);
-    const appData = await Promise.all(
-      appIds.map(async (appId) => {
-        const appData: any = {};
-        const appDataKeys = dependencyResolver[appId];
-        appDataKeys.forEach((key) => {
-          appData[key] = content[key as keyof typeof content];
-        });
-        // const doc = await TileDocument.create(ceramic, appId, appData);
-        // return doc.id;
-        console.log({ appData });
-      })
-    );
-  }
+  //   // create a tile document for each app which contains data required by the app
+  //   const appIds = Object.keys(dependencyResolver);
+  //   const appData = await Promise.all(
+  //     appIds.map(async (appId) => {
+  //       const appData: any = {};
+  //       const appDataKeys = dependencyResolver[appId];
+  //       appDataKeys.forEach((key) => {
+  //         appData[key.alias] = content[key.name as keyof typeof content];
+  //       });
+  //       // const doc = await TileDocument.create(ceramic, appId, appData);
+  //       // return doc.id;
+  //       console.log({ appData });
+  //     })
+  //   );
+  // }
 
   async getDataFromSchema() {
     interface Schema {
-      [appId: string]: string[];
+      [appId: string]: {
+        name: string;
+        alias: string;
+      }[];
     }
 
     // object to store the appid and the columns it uses from the schema
     const dependencyResolver: Schema = {
-      appId1: ['name', 'description', 'logo'],
-      appId2: ['twitter', 'facebook', 'instagram'],
-      appId3: ['fundingAddress'],
+      '3beca601-c602-453e-827b-a24f0ccff978': [
+        {
+          name: 'entityAddress',
+          alias: 'entityAddress',
+        },
+        {
+          name: 'description',
+          alias: 'description',
+        },
+        {
+          name: 'title',
+          alias: 'title',
+        },
+        {
+          name: 'image',
+          alias: 'image',
+        },
+        {
+          name: 'website',
+          alias: 'website',
+        },
+        {
+          name: 'fundingAddress',
+          alias: 'fundingAddress',
+        },
+      ],
+      '8482e8a6-52c2-4275-bb31-867b1ad49952': [
+        {
+          name: 'name',
+          alias: 'daoName',
+        },
+        {
+          name: 'about',
+          alias: 'daoAbout',
+        },
+      ],
     };
 
     // create a new ceramic client
@@ -201,11 +235,12 @@ export class StreamData extends Base {
         const doc = await TileDocument.load(ceramic, appId);
         const content = doc.content as any;
         appDataKeys.forEach((key) => {
-          appData[key] = content[key as keyof typeof content];
+          appData[key.alias] = content[key.name as keyof typeof content];
         });
         return appData;
       })
     );
+    console.log({ appData });
   }
 
   async updateDataFromSchema(

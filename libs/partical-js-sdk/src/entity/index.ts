@@ -212,9 +212,6 @@ export class Entity {
   static async hasAccess(entityAddress: string, userAddress: string) {
     if (!entityAddress) return;
     const res = await Gnosis.getSafeInfo(entityAddress);
-    console.log(res.owners[1]);
-    console.log({ userAddress });
-    console.log(ethers.utils.getAddress(userAddress));
     return res.owners.includes(ethers.utils.getAddress(userAddress));
   }
 }

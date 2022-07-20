@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Ceramic, Indexor } from '@partical/partical-js-sdk';
+import { Ceramic, Data, Indexor } from '@partical/partical-js-sdk';
 
-export function useStream<T>(streamId: string) {
+interface Props {
+  appId: string;
+  streamId: string;
+  type?: 'view' | 'table';
+}
+
+export function useStream<T>({ appId, streamId, type = 'table' }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [streamData, setStreamData] = useState<T>({} as T);
@@ -14,9 +20,15 @@ export function useStream<T>(streamId: string) {
   const getData = async () => {
     setLoading(true);
     try {
-      const { content, metadata } = await Ceramic.getStream<T>(streamId);
-      setStreamData(content);
-      setMetadata(metadata);
+      if (type === 'table') {
+        const { content, metadata } = await Ceramic.getStream<T>(streamId);
+        setStreamData(content);
+        setMetadata(metadata);
+      } else {
+        const content = await Data.getViewData<T>(appId, streamId);
+        console.log({ content });
+        setStreamData(content);
+      }
     } catch (e) {
       console.log({ e });
       setError('Error getting data');

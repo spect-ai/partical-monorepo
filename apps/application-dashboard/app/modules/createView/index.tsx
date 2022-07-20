@@ -7,6 +7,7 @@ import {
   IconPlus,
   Input,
   Stack,
+  Tag,
   Text,
 } from 'degen';
 import { useRouter } from 'next/router';
@@ -14,7 +15,6 @@ import React, { useState } from 'react';
 import ReactJson from 'react-json-view';
 import { useMoralis } from 'react-moralis';
 import styled from 'styled-components';
-import { defaultSchema } from './defaultSchema';
 
 const Container = styled(Box)`
   height: 100%;
@@ -27,25 +27,30 @@ const Container = styled(Box)`
   transition: 0.5s;
 `;
 
-export default function CreateApp() {
+interface Props {
+  apps: any[];
+}
+
+export default function CreateView({ apps }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [schema, setSchema] = useState<any>(defaultSchema);
+  const [schema, setSchema] = useState<any>();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-
-  const { createApp, loading } = useNamespace();
-
+  const { createView, loading } = useNamespace();
   const { user } = useMoralis();
-
   const router = useRouter();
+
+  const [selectedApps, setSelectedApps] = useState<string[]>([]);
+
   return (
     <>
       <Button
         prefix={<IconPlus />}
         size="small"
         onClick={() => setIsOpen(true)}
+        variant="tertiary"
       >
-        Create App
+        Create View
       </Button>
       <Container
         width={isOpen ? '168' : '0'}
@@ -54,7 +59,7 @@ export default function CreateApp() {
       >
         <Box padding="8" borderBottomWidth="0.375">
           <Stack direction="horizontal" justify="space-between">
-            <Heading>Create App</Heading>
+            <Heading>Create View</Heading>
             <Button
               shape="circle"
               size="small"
@@ -97,6 +102,58 @@ export default function CreateApp() {
         >
           <Stack>
             <Text weight="semiBold" size="extraLarge">
+              Select Apps
+            </Text>
+            <Stack direction="horizontal" wrap>
+              {apps?.map((app) => (
+                <Box
+                  key={app.appId}
+                  cursor="pointer"
+                  onClick={() => {
+                    if (selectedApps.includes(app.appId)) {
+                      setSelectedApps(
+                        selectedApps.filter((id) => id !== app.appId)
+                      );
+                    } else {
+                      setSelectedApps([...selectedApps, app.appId]);
+                      const appId = app.appId;
+                      const appColumns = Object.keys(app.schema.properties).map(
+                        (property) => {
+                          return {
+                            name: property,
+                            alias: property,
+                          };
+                        }
+                      );
+                      setSchema({
+                        ...schema,
+                        [appId]: appColumns,
+                      });
+                      console.log(appColumns);
+                    }
+                  }}
+                >
+                  <Tag
+                    hover
+                    tone={
+                      selectedApps.includes(app.appId) ? 'green' : 'secondary'
+                    }
+                  >
+                    {app.appName}
+                  </Tag>
+                </Box>
+              ))}
+            </Stack>
+          </Stack>
+        </Box>
+        <Box
+          borderBottomWidth="0.375"
+          paddingX="8"
+          paddingTop="6"
+          paddingBottom="8"
+        >
+          <Stack>
+            <Text weight="semiBold" size="extraLarge">
               Schema
             </Text>
             <ReactJson
@@ -122,7 +179,7 @@ export default function CreateApp() {
             size="small"
             loading={loading}
             onClick={async () => {
-              await createApp(
+              await createView(
                 name,
                 description,
                 schema,

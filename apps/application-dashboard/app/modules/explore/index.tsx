@@ -4,11 +4,16 @@ import { Box, Heading, Stack, Text } from 'degen';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
 import { useMoralis } from 'react-moralis';
+import { ToastContainer } from 'react-toastify';
 const AppData = dynamic(() => import('../appData'), {
   ssr: false,
 });
 
 const CreateApp = dynamic(() => import('../createApp'), {
+  ssr: false,
+});
+
+const CreateView = dynamic(() => import('../createView'), {
   ssr: false,
 });
 
@@ -30,7 +35,11 @@ export default function Explore() {
   return (
     <Box padding="8">
       <Loader loading={loading} text="Loading" />
-      <CreateApp />
+      <ToastContainer />
+      <Stack direction="horizontal">
+        <CreateApp />
+        <CreateView apps={apps} />
+      </Stack>
       {apps?.map((app) => {
         return <AppData app={app} key={app.appId} />;
       })}

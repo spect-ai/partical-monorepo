@@ -17,9 +17,13 @@ const GrantCover = styled(GrantImage)`
 export function Stream() {
   const router = useRouter();
   const { stream } = router.query;
-  const { streamData, loading, getData } = useStream<GrantData>(
-    stream as string
-  );
+  const { streamData, loading, getData } = useStream<GrantData>({
+    appId: '7934f21e-69f5-472e-b6d2-06d8914d03bd',
+    streamId: stream as string,
+    type: 'view',
+  });
+
+  console.log({ streamData });
   return (
     <Layout>
       {loading && <Loader loading text="Loading..." />}
@@ -68,8 +72,17 @@ export function Stream() {
                 </Container>
               </Box>
               <Box>
-                <Heading>About</Heading>
+                <Heading>Description</Heading>
                 <Text>{streamData.description}</Text>
+              </Box>
+              <Box>
+                <Heading>About DAO</Heading>
+                <Stack>
+                  <Text variant="label">Name</Text>
+                  <Text>{streamData.daoName}</Text>
+                  <Text variant="label">About</Text>
+                  <Text>{streamData.daoAbout}</Text>
+                </Stack>
               </Box>
             </Stack>
           </Box>

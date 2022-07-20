@@ -46,3 +46,10 @@ export interface MoralisStream {
   streamId: string;
   updatedAt: string;
 }
+
+export interface DependencyResolver {
+  [appId: string]: {
+    name: string;
+    alias: string;
+  }[];
+}

@@ -27,7 +27,7 @@
         "development": {
           "buildTarget": "example-app:build:development",
           "dev": true,
-          "port": 3000
+          "port": 3001
         },
         "production": {
           "buildTarget": "example-app:build:production",

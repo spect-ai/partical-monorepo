@@ -12,6 +12,8 @@ import '@fontsource/inter/700.css';
 import '@fontsource/inter/800.css';
 import '@fontsource/inter/900.css';
 
+import 'react-toastify/dist/ReactToastify.css';
+
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <MoralisProvider

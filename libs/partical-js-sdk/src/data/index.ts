@@ -2,6 +2,8 @@ import Lit from '../lit';
 import { Ceramic } from '../ceramic';
 import { Indexor } from '../indexor';
 import { TileMetadataArgs } from '@ceramicnetwork/stream-tile';
+import { DependencyResolver } from '../../types';
+
 export class Data {
   static async createData<T>(
     data: T,
@@ -79,5 +81,85 @@ export class Data {
       console.log({ e });
       return undefined;
     }
+  }
+
+  // const dependencyResolver: Schema = {
+  //   '3beca601-c602-453e-827b-a24f0ccff978': [
+  //     {
+  //       name: 'entityAddress',
+  //       alias: 'entityAddress',
+  //     },
+  //     {
+  //       name: 'description',
+  //       alias: 'description',
+  //     },
+  //     {
+  //       name: 'title',
+  //       alias: 'title',
+  //     },
+  //     {
+  //       name: 'image',
+  //       alias: 'image',
+  //     },
+  //     {
+  //       name: 'website',
+  //       alias: 'website',
+  //     },
+  //     {
+  //       name: 'fundingAddress',
+  //       alias: 'fundingAddress',
+  //     },
+  //   ],
+  //   '8482e8a6-52c2-4275-bb31-867b1ad49952': [
+  //     {
+  //       name: 'name',
+  //       alias: 'daoName',
+  //     },
+  //     {
+  //       name: 'about',
+  //       alias: 'daoAbout',
+  //     },
+  //   ],
+  // };
+
+  static async getViewData<T>(appId: string, streamId: string) {
+    const app = await Indexor.queryOneIndex('Namespace', { appId });
+    const dependencyResolver = app?.get('resolver') as DependencyResolver;
+
+    const stream = await Indexor.queryOneIndex('StreamIndexer', {
+      streamId,
+    });
+    const entityAddress = stream?.get('entityAddress');
+    const viewData: any = {};
+    console.log({ stream, app });
+    console.log({ dependencyResolver });
+
+    await Promise.all(
+      Object.keys(dependencyResolver).map(async (appId) => {
+        console.log({ appId });
+        if (appId === stream?.get('appId')) {
+          const { content }: any = await Ceramic.getStream(streamId);
+          dependencyResolver[appId].forEach(async (dependency) => {
+            viewData[dependency.alias] = content[dependency.name];
+          });
+        } else {
+          const appStream = await Indexor.queryOneIndex('StreamIndexer', {
+            appId,
+            entityAddress,
+          });
+          if (appStream) {
+            const { content }: any = await Ceramic.getStream(
+              appStream?.get('streamId')
+            );
+            console.log({ content });
+            dependencyResolver[appId].forEach(async (dependency) => {
+              viewData[dependency.alias] = content[dependency.name];
+            });
+          }
+        }
+      })
+    );
+    console.log({ viewData });
+    return viewData as T;
   }
 }

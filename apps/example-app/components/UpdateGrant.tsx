@@ -16,7 +16,10 @@ interface props {
 export default function UpdateGrant({ grant, streamId, getData }: props) {
   const router = useRouter();
   const { stream } = router.query;
-  const { canEditStream } = useStream(stream as string);
+  const { canEditStream } = useStream({
+    appId: '3beca601-c602-453e-827b-a24f0ccff978',
+    streamId: stream as string,
+  });
   const { updateAppData, loading } = useAppData<GrantData>({
     appId: '3beca601-c602-453e-827b-a24f0ccff978',
   });

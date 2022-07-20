@@ -36,6 +36,8 @@ export interface GrantData {
   fundingAddress: string;
   entityAddress: string;
   streamId?: string;
+  daoName?: string;
+  daoAbout?: string;
 }
 
 export function CreateGrant() {

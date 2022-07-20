@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useMoralis } from 'react-moralis';
+import { ToastContainer } from 'react-toastify';
 const AppData = dynamic(() => import('../appData'), {
   ssr: false,
 });
@@ -29,6 +30,7 @@ export default function Dashboard() {
   console.log({ apps });
   return (
     <Box padding="8">
+      <ToastContainer />
       <Stack direction="horizontal">
         <Heading>Dashboard</Heading>
         <CreateApp />

@@ -24,7 +24,7 @@ export class Namespace {
     const schemaCommit = await Ceramic.createSchema(schema);
 
     const appId = uuidv4();
-    await Indexor.addIndex('Namespace', {
+    return await Indexor.addIndex('Namespace', {
       appName: name,
       schema: JSON.stringify(schema),
       schemaCommit,
@@ -32,6 +32,28 @@ export class Namespace {
       description,
       owner: userAddress,
       seed,
+    });
+  }
+
+  static async createView(
+    name: string,
+    description: string,
+    resolver: {
+      [appId: string]: {
+        name: string;
+        alias: string;
+      }[];
+    },
+    userAddress: string
+  ) {
+    const appId = uuidv4();
+    return await Indexor.addIndex('Namespace', {
+      appName: name,
+      appId,
+      description,
+      owner: userAddress,
+      resolver,
+      isView: true,
     });
   }
 
@@ -118,11 +140,13 @@ export class Namespace {
       return {
         objectId: item.id,
         appName: item.get('appName'),
-        schema: JSON.parse(item.get('schema')),
+        schema: item.get('schema') && JSON.parse(item.get('schema')),
         appId: item.get('appId'),
         schemaCommit: item.get('schemaCommit'),
         seed: item.get('seed'),
         description: item.get('description'),
+        resolver: item.get('resolver'),
+        isView: item.get('isView'),
       };
     });
     console.log({ res });
@@ -139,11 +163,13 @@ export class Namespace {
       return {
         objectId: item.id,
         appName: item.get('appName'),
-        schema: JSON.parse(item.get('schema')),
+        schema: item.get('schema') && JSON.parse(item.get('schema')),
         appId: item.get('appId'),
         schemaCommit: item.get('schemaCommit'),
         seed: item.get('seed'),
         description: item.get('description'),
+        resolver: item.get('resolver'),
+        isView: item.get('isView'),
       };
     });
     console.log({ res });
