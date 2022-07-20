@@ -7,7 +7,7 @@ import Lit from '../lit';
 import { Ceramic } from '../ceramic';
 import { storeMetadata } from '../utils';
 import { Indexor } from '../indexor';
-import { Schema } from '../schema';
+import { MoralisStream } from '../../types';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const LitJsSdk = require('lit-js-sdk');
 
@@ -147,18 +147,40 @@ export class Entity {
   }
 
   static async getEntityData(entityAddress: string) {
-    const streams = await Indexor.queryIndex('StreamIndexer', {
-      entityAddress,
-    });
+    const params = { entityAddress };
+    const streams: MoralisStream[] = await Moralis.Cloud.run(
+      'getEntityStreams',
+      params
+    );
+    console.log({ streams });
     const data: {
       [key: string]: any;
-    } = await Ceramic.getMultipleStreams(streams.map((s) => s.get('streamId')));
+    } = await Ceramic.getMultipleStreams(streams.map((s) => s.streamId));
 
-    // // return only content from the data
-    // return Object.keys(data).map((stream) => {
-    //   return data[stream].content;
-    // });
-    return data;
+    const entityData: {
+      [key: string]: {
+        appId: string;
+        name: string;
+        schemaName: string;
+        streams: any[];
+      };
+    } = {};
+    // group streams by namespace
+    streams.map((s) => {
+      const streamData = data[s.streamId];
+      if (entityData[s.appId]) {
+        entityData[s.appId].streams.push(streamData);
+      } else {
+        entityData[s.appId] = {
+          appId: s.appId,
+          name: s.namespace[0].appName,
+          schemaName: s.namespace[0].schemaName,
+          streams: [streamData],
+        };
+      }
+    });
+
+    return entityData;
   }
 
   static async giveAccess(entityAddress: string, userAddress: string) {
@@ -175,7 +197,7 @@ export class Entity {
       throw new Error('Entity not found');
     }
 
-    const mappedEntity = await Indexor.addIndex('EntityMapping', {
+    await Indexor.addIndex('EntityMapping', {
       entityAddress,
       userAddress: userAddress.toLowerCase(),
       encryptedSymmetricKey: result.get('encryptedSymmetricKey'),

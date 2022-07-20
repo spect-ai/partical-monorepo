@@ -24,17 +24,20 @@ export function useAppData<T>({ appId }: Props) {
 
   const createAppData = async (
     data: T,
-    entityAddress: string,
-    fromSchema?: string,
-    schemaId?: string
+    entityAddress: string
+    // fromSchema?: string,
+    // schemaId?: string
   ) => {
     setLoading(true);
     let schemaStreamId;
     try {
-      if (fromSchema) {
-        const schema = await Indexor.queryOneIndex('Schema', { schemaId });
-        schemaStreamId = schema?.get('streamId');
-      }
+      // if (fromSchema) {
+      //   const schema = await Indexor.queryOneIndex('Schema', { schemaId });
+      //   schemaStreamId = schema?.get('streamId');
+      // }
+      const app = await Indexor.queryOneIndex('Namespace', {
+        appId,
+      });
       const entity = await Indexor.queryIndex('EntityMapping', {
         entityAddress,
       });
@@ -42,10 +45,10 @@ export function useAppData<T>({ appId }: Props) {
       const streamId = await Data.createData<T>(
         data,
         appId,
-        ['Grant', 'Gitcoin'],
+        [appId, 'Gitcoin'],
         entityAddress,
         entity[0].get('encryptedSymmetricKey'),
-        schemaStreamId
+        app?.get('schemaCommit')
       );
       // const streamIds = await Schema.addToCeramic(entityAddress, appId);
       // updateAppData(streamIds[0], data, entityAddress);

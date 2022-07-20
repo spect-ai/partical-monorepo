@@ -1,13 +1,61 @@
-import OnChainEntity from '../contract/OnChainEntity';
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Indexor } from '../indexor';
 import { generateKey } from '../utils';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { NamespaceMetadata } from 'libs/partical-js-sdk/types';
 import { v4 as uuidv4 } from 'uuid';
 import { Entity } from '../entity';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+import { Ceramic } from '../ceramic';
 const LitJsSdk = require('lit-js-sdk');
+const crypto = require('crypto');
+
 export class Namespace {
+  static async createApp(
+    name: string,
+    description: string,
+    schema: any,
+    userAddress: string
+  ) {
+    const seed = new Uint8Array(32);
+    crypto.randomFillSync(seed);
+
+    await Ceramic.authenticate(seed);
+
+    const schemaCommit = await Ceramic.createSchema(schema);
+
+    const appId = uuidv4();
+    await Indexor.addIndex('Namespace', {
+      appName: name,
+      schema: JSON.stringify(schema),
+      schemaCommit,
+      appId,
+      description,
+      owner: userAddress,
+      seed,
+    });
+  }
+
+  static async updateApp(schema: any, appId: string) {
+    const app = await Indexor.queryOneIndex('Namespace', {
+      appId,
+    });
+
+    await Ceramic.authenticate(
+      Uint8Array.from(Object.entries(app?.get('seed')) as any)
+    );
+    const schemaCommit = await Ceramic.createSchema(schema);
+    await Indexor.updateOneIndex(
+      'Namespace',
+      {
+        appId,
+      },
+      {
+        schema: JSON.stringify(schema),
+        schemaCommit,
+      }
+    );
+  }
+
   static async create(appName: string): Promise<{
     key: string;
     appId: string;
@@ -40,25 +88,27 @@ export class Namespace {
   static async get(appId: string): Promise<NamespaceMetadata> {
     console.log({ appId });
 
-    const result = await Indexor.queryOneIndex('Namespace', {
+    const item = await Indexor.queryOneIndex('Namespace', {
       appId,
     });
-    console.log({ result });
-    if (!result) {
+    console.log({ item });
+    if (!item) {
       return {} as NamespaceMetadata;
     }
     return {
-      objectId: result.id,
-      appName: result.get('appName'),
-      schemaName: result.get('schemaName'),
-      key: result.get('key'),
-      appId: result.get('appId'),
+      objectId: item.id,
+      appName: item.get('appName'),
+      schema: JSON.parse(item.get('schema')),
+      appId: item.get('appId'),
+      schemaCommit: item.get('schemaCommit'),
+      seed: item.get('seed'),
+      description: item.get('description'),
     };
   }
 
   static async getByUser(userAddress: string): Promise<NamespaceMetadata[]> {
     const results = await Indexor.queryIndex('Namespace', {
-      userAddress,
+      owner: userAddress,
     });
     if (!results) {
       return [] as NamespaceMetadata[];
@@ -68,9 +118,32 @@ export class Namespace {
       return {
         objectId: item.id,
         appName: item.get('appName'),
-        schemaName: item.get('schemaName'),
-        key: item.get('key'),
+        schema: JSON.parse(item.get('schema')),
         appId: item.get('appId'),
+        schemaCommit: item.get('schemaCommit'),
+        seed: item.get('seed'),
+        description: item.get('description'),
+      };
+    });
+    console.log({ res });
+    return res;
+  }
+
+  static async getAll(): Promise<NamespaceMetadata[]> {
+    const results = await Indexor.queryIndex('Namespace', {});
+    if (!results) {
+      return [] as NamespaceMetadata[];
+    }
+
+    const res = results.map((item) => {
+      return {
+        objectId: item.id,
+        appName: item.get('appName'),
+        schema: JSON.parse(item.get('schema')),
+        appId: item.get('appId'),
+        schemaCommit: item.get('schemaCommit'),
+        seed: item.get('seed'),
+        description: item.get('description'),
       };
     });
     console.log({ res });

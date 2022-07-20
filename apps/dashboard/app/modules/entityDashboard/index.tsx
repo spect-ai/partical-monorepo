@@ -1,19 +1,30 @@
 import { Box, Button, Heading, IconPencil, Stack, Text } from 'degen';
 import React, { useEffect, useState } from 'react';
-import { useEntity } from '@partical/react-partical';
+import { useAppData, useEntity } from '@partical/react-partical';
 import GiveAccess from '../giveAccess';
 import { useRouter } from 'next/router';
-import { Table } from '@partical/common';
+import { Accordian, Loader } from '@partical/common';
 import { useMoralis } from 'react-moralis';
 import DataRow from '../dataRow';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
+// import StreamView from '../streamView';
+import dynamic from 'next/dynamic';
+
+const StreamView = dynamic(() => import('../streamView'), {
+  ssr: false,
+});
 
 export default function EntityDashboard() {
   const { getEntityData, hasAccess, loading } = useEntity();
   const router = useRouter();
   const { address } = router.query;
   const [data, setData] = useState<{
-    [key: string]: any;
+    [key: string]: {
+      appId: string;
+      name: string;
+      schemaName: string;
+      streams: any[];
+    };
   }>({});
 
   const [access, setAccess] = useState(false);
@@ -38,30 +49,8 @@ export default function EntityDashboard() {
     }
   }, [address, isAuthenticated]);
 
-  const formatRows = React.useCallback(
-    (data: { [key: string]: TileDocument }) => {
-      const rows = [];
-      for (const key in data) {
-        const row = [];
-        for (const column in data[key].content) {
-          row.push(
-            <DataRow
-              content={data[key].content[column]}
-              streamId={key}
-              column={column}
-              fetchData={fetchData}
-            />
-          );
-        }
-        rows.push(row);
-      }
-      return rows;
-    },
-    []
-  );
-
-  if (loading || !Object.keys(data || {}).length) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <Loader loading text="Loading.." />;
   }
 
   return (
@@ -75,20 +64,33 @@ export default function EntityDashboard() {
             variant="tertiary"
             onClick={() => {
               console.log('test');
-              formatRows(data);
             }}
-          >
-            a
-          </Button>
+          ></Button>
           {access && <GiveAccess />}
         </Stack>
         <Box>
-          <Box borderWidth="0.5" padding="4" borderRadius="2xLarge">
+          {/* <Box borderWidth="0.5" padding="4" borderRadius="2xLarge">
             <Table
               columns={Object.keys(data[Object.keys(data)[0]]?.content)}
               rows={formatRows(data)}
             />
-          </Box>
+          </Box> */}
+          {Object.keys(data).map((app) => {
+            return (
+              <Box key={data[app].appId}>
+                <Accordian
+                  name={<Heading>{data[app].name}</Heading>}
+                  defaultOpen
+                >
+                  <StreamView
+                    streams={data[app].streams}
+                    access={access}
+                    fetchData={fetchData}
+                  />
+                </Accordian>
+              </Box>
+            );
+          })}
         </Box>
       </Stack>
     </Box>

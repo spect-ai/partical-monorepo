@@ -9,7 +9,7 @@ export class Data {
     tags: string[],
     entityAddress: string,
     encryptedSymmetricKey: string,
-    schemaStreamId?: string
+    schemaCommitId?: string
   ): Promise<string | undefined> {
     try {
       console.log({ encryptedSymmetricKey, entityAddress });
@@ -17,15 +17,15 @@ export class Data {
         encryptedSymmetricKey,
         entityAddress
       );
-      console.log('schemaStreamId', schemaStreamId);
+      console.log('schemaStreamId', schemaCommitId);
       /** Authenticate using symmetric key and create key did */
       await Ceramic.authenticate(symmetricKey);
       let args: TileMetadataArgs = { tags };
-      if (schemaStreamId)
+      if (schemaCommitId)
         args = {
           ...args,
-          schema: await Ceramic.getCommit(schemaStreamId),
-          family: appId,
+          schema: schemaCommitId,
+          family: entityAddress,
         };
       const streamId = await Ceramic.createStream(data, args);
       await Indexor.addIndex('StreamIndexer', {

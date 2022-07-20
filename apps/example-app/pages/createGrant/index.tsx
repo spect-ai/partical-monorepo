@@ -31,17 +31,15 @@ export interface GrantData {
   title: string;
   description: string;
   image: string;
-  github: string;
   website: string;
-  twitter: string;
-  fundAddress: string;
+  fundingAddress: string;
   entityAddress: string;
   streamId?: string;
 }
 
 export function CreateGrant() {
   const { loading, error, createAppData } = useAppData<GrantData>({
-    appId: 'wTao5gHcMP8wEoVROtMNZ3Iz',
+    appId: '3beca601-c602-453e-827b-a24f0ccff978',
   });
   const [title, settitle] = useState('Self Sovereign Database layer for DAOs');
   const [description, setdescription] = useState('');
@@ -107,24 +105,24 @@ export function CreateGrant() {
               onChange={uploadFile}
               maxSize={10}
             />
-            <Input
+            {/* <Input
               label="Github URL"
               placeholder="https://github.com/mygrant"
               value={github}
               onChange={(e) => setgithub(e.target.value)}
-            />
+            /> */}
             <Input
               label="Project Website"
               placeholder="https://human.fund"
               value={website}
               onChange={(e) => setwebsite(e.target.value)}
             />
-            <Input
+            {/* <Input
               label="Project Twitter Handle"
               placeholder="mygrant"
               value={twitter}
               onChange={(e) => settwitter(e.target.value)}
-            />
+            /> */}
             <Input
               label="Fund Address"
               placeholder="0xabcde..."
@@ -142,10 +140,8 @@ export function CreateGrant() {
                 title,
                 description,
                 image: (moralisFile as any)._ipfs,
-                github,
                 website,
-                twitter,
-                fundAddress,
+                fundingAddress: fundAddress,
                 entityAddress: (entities?.[0] as any)?.get('entityAddress'),
               },
               (entities?.[0] as any)?.get('entityAddress')

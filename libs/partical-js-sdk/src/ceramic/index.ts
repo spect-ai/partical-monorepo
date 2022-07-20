@@ -28,6 +28,11 @@ export class Ceramic {
     return doc.id.toString();
   }
 
+  static async createSchema(schema: any) {
+    const doc = await TileDocument.create(this.ceramicClient, schema);
+    return doc.commitId.toString();
+  }
+
   static async getStream<T>(streamId: string) {
     const doc = await TileDocument.load(this.ceramicClient, streamId);
     const content = doc.content as T;
