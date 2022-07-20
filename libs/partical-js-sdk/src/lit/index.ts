@@ -32,14 +32,22 @@ export default class Lit {
 
     const accessControlConditions = [
       {
-        contractAddress: entityAddress,
-        standardContractType,
-        chain,
-        method: 'balanceOf',
-        parameters: [':userAddress', '0'],
+        contractAddress: '0xCE02ab993338c9a977e6f93fcFdB0e39090E0Df2',
+        functionName: 'isOwner',
+        functionParams: [':userAddress'],
+        functionAbi: {
+          constant: true,
+          inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
+          name: 'isOwner',
+          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+          payable: false,
+          stateMutability: 'view',
+          type: 'function',
+        },
+        chain: 'polygon',
         returnValueTest: {
-          comparator: '>',
-          value: '0',
+          comparator: '=',
+          value: true,
         },
       },
     ];

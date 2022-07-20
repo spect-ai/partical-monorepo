@@ -13,24 +13,58 @@ const LitJsSdk = require('lit-js-sdk');
 
 const chain = 'rinkeby';
 const standardContractType = 'ERC1155';
+
+const evmContractConditions = [
+  {
+    contractAddress: '0xCE02ab993338c9a977e6f93fcFdB0e39090E0Df2',
+    functionName: 'isOwner',
+    functionParams: [':userAddress'],
+    functionAbi: {
+      constant: true,
+      inputs: [{ internalType: 'address', name: 'owner', type: 'address' }],
+      name: 'isOwner',
+      outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+      payable: false,
+      stateMutability: 'view',
+      type: 'function',
+    },
+    chain: 'polygon',
+    returnValueTest: {
+      comparator: '=',
+      value: true,
+    },
+  },
+];
 export class Entity {
   constructor() {
     if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
   }
 
   private static async _generateKeyAndAuthenticate(address: string) {
+    console.log(`generateKeyAndAuthenticate...`);
     const { symmetricKey }: any = await Lit.checkAndSignAuthMessage('encrypt');
+    console.log({ address });
     const encryptedKey = await Lit.saveKey(
       [
         {
           contractAddress: address,
-          standardContractType,
-          chain,
-          method: 'balanceOf',
-          parameters: [':userAddress', '0'],
+          functionName: 'isOwner',
+          functionParams: [':userAddress'],
+          functionAbi: {
+            constant: true,
+            inputs: [
+              { internalType: 'address', name: 'owner', type: 'address' },
+            ],
+            name: 'isOwner',
+            outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function',
+          },
+          chain: 'polygon',
           returnValueTest: {
-            comparator: '>',
-            value: '0',
+            comparator: '=',
+            value: true,
           },
         },
       ],
@@ -41,11 +75,11 @@ export class Entity {
     return encryptedKey;
   }
 
-  static async createCommon(name: string) {
+  static async createCommon(name: string, entityAddress: string) {
     console.log('Creating entity ..');
-    const data = await OnChainEntity.create('');
-    const entityAddress = data.events[1].args.entity;
-    OnChainEntity.initContract(entityAddress);
+    // const data = await OnChainEntity.create('');
+    // const entityAddress = data.events[1].args.entity;
+    // OnChainEntity.initContract(entityAddress);
 
     const encryptedKey = await Entity._generateKeyAndAuthenticate(
       entityAddress
@@ -68,10 +102,9 @@ export class Entity {
     );
     console.log({ url });
 
-    /** Update entity's on chain uri with new ipfs uri */
-    await OnChainEntity.update(url);
-    console.log('On chain entity created');
-
+    // /** Update entity's on chain uri with new ipfs uri */
+    // await OnChainEntity.update(url);
+    // console.log('On chain entity created');
     return {
       entityAddress,
       url,
@@ -84,7 +117,10 @@ export class Entity {
     try {
       /** Create entity on chain using factory contract */
       const { entityAddress, url, streamId, encryptedKey } =
-        await Entity.createCommon(name);
+        await Entity.createCommon(
+          name,
+          '0xCE02ab993338c9a977e6f93fcFdB0e39090E0Df2'
+        );
       /** Add index in moralis for entity */
       return await Indexor.addIndex('EntityMapping', {
         entityAddress,
