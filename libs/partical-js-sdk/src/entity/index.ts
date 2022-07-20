@@ -8,6 +8,8 @@ import { Ceramic } from '../ceramic';
 import { storeMetadata } from '../utils';
 import { Indexor } from '../indexor';
 import { MoralisStream } from '../../types';
+import { Gnosis } from '../gnosis';
+import { ethers } from 'ethers';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const LitJsSdk = require('lit-js-sdk');
 
@@ -208,13 +210,11 @@ export class Entity {
   }
 
   static async hasAccess(entityAddress: string, userAddress: string) {
-    const result = await Indexor.queryOneIndex('EntityMapping', {
-      entityAddress,
-      userAddress: userAddress.toLowerCase(),
-    });
-    if (!result) {
-      return false;
-    }
-    return true;
+    if (!entityAddress) return;
+    const res = await Gnosis.getSafeInfo(entityAddress);
+    console.log(res.owners[1]);
+    console.log({ userAddress });
+    console.log(ethers.utils.getAddress(userAddress));
+    return res.owners.includes(ethers.utils.getAddress(userAddress));
   }
 }

@@ -12,6 +12,9 @@
     "@ceramicnetwork/http-client": "^2.3.0",
     "@ceramicnetwork/stream-tile": "^2.3.0",
     "@fontsource/inter": "^4.5.11",
+    "@gnosis.pm/safe-core-sdk": "^2.2.1",
+    "@gnosis.pm/safe-ethers-lib": "^1.2.1",
+    "@gnosis.pm/safe-service-client": "^1.2.0",
     "@nrwl/next": "14.4.2",
     "@openzeppelin/contracts": "^4.7.0",
     "core-js": "^3.6.5",
@@ -39,6 +42,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@gnosis.pm/safe-core-sdk-types": "^1.2.1",
     "@nrwl/cli": "14.4.2",
     "@nrwl/cypress": "14.4.2",
     "@nrwl/eslint-plugin-nx": "14.4.2",

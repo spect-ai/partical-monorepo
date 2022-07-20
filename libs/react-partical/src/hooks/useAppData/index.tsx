@@ -29,7 +29,6 @@ export function useAppData<T>({ appId }: Props) {
     // schemaId?: string
   ) => {
     setLoading(true);
-    let schemaStreamId;
     try {
       // if (fromSchema) {
       //   const schema = await Indexor.queryOneIndex('Schema', { schemaId });
@@ -53,12 +52,12 @@ export function useAppData<T>({ appId }: Props) {
       // const streamIds = await Schema.addToCeramic(entityAddress, appId);
       // updateAppData(streamIds[0], data, entityAddress);
       console.log({ streamId });
+      setLoading(false);
       return streamId;
     } catch (e) {
       setError('Error creating data');
       return false;
     }
-    setLoading(false);
   };
 
   const updateAppData = async (

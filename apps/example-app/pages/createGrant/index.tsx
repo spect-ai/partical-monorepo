@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { useMoralis, useMoralisFile } from 'react-moralis';
 import { Layout } from '@partical/common';
 import CreateEntity from '../../components/CreateEntity';
+import { useRouter } from 'next/router';
 
 const ScrollContainer = styled(Box)`
   ::-webkit-scrollbar {
@@ -43,17 +44,17 @@ export function CreateGrant() {
   });
   const [title, settitle] = useState('Self Sovereign Database layer for DAOs');
   const [description, setdescription] = useState('');
-  const [github, setgithub] = useState('https://github.com/spect-ai/tribes.v1');
   const [website, setwebsite] = useState(
     'https://gitcoin.co/grants/5971/database-layer-for-daos'
   );
-  const [twitter, settwitter] = useState('joinSpect');
   const [fundAddress, setfundAddress] = useState(
     '0x6304CE63F2EBf8C0Cc76b60d34Cc52a84aBB6057'
   );
   const { isUploading, moralisFile, saveFile } = useMoralisFile();
   const { user } = useMoralis();
   const { getMyEntity, entities } = useEntity();
+
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -75,7 +76,7 @@ export function CreateGrant() {
           <Stack>
             <Stack space="2">
               <Box marginLeft="4">
-                <Text weight="semiBold">Entity</Text>
+                <Text weight="semiBold">DAO</Text>
               </Box>
               <Stack direction="horizontal" wrap>
                 {entities?.map((entity) => (
@@ -83,7 +84,7 @@ export function CreateGrant() {
                     <Tag hover>{entity.get('name')}</Tag>
                   </Box>
                 ))}
-                <CreateEntity />
+                <CreateEntity getMyEntity={getMyEntity} />
               </Stack>
             </Stack>
             <Input
@@ -134,8 +135,8 @@ export function CreateGrant() {
         <Text>{error}</Text>
         <Button
           loading={loading}
-          onClick={() => {
-            void createAppData(
+          onClick={async () => {
+            const streamId = await createAppData(
               {
                 title,
                 description,
@@ -146,6 +147,7 @@ export function CreateGrant() {
               },
               (entities?.[0] as any)?.get('entityAddress')
             );
+            router.push(`/grant/${streamId}`);
           }}
         >
           Create Grant

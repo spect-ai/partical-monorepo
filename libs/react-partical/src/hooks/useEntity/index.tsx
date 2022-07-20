@@ -1,4 +1,4 @@
-import { Entity } from '@partical/partical-js-sdk';
+import { Entity, Gnosis } from '@partical/partical-js-sdk';
 import React, { useState } from 'react';
 
 export function useEntity() {
