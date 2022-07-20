@@ -15,10 +15,10 @@ export function useEntity() {
   }, []);
 
   const createEntity = React.useCallback(
-    async (userAddress: string, name: string) => {
+    async (userAddress: string, name: string, safeAddress: string) => {
       if (!userAddress) return;
       setloading(true);
-      const res = await Entity.create(userAddress, name);
+      const res = await Entity.create(userAddress, name, safeAddress);
       setloading(false);
       return res;
     },

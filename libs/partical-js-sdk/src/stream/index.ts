@@ -10,7 +10,7 @@ import Moralis from 'moralis';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 
 const standardContractType = 'ERC1155';
-const chain = 'rinkeby';
+const chain = 'polygon';
 
 export class StreamData extends Base {
   async createStreamData(

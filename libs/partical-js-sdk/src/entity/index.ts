@@ -63,8 +63,9 @@ export class Entity {
           },
           chain: 'polygon',
           returnValueTest: {
+            key: '',
             comparator: '=',
-            value: true,
+            value: 'true',
           },
         },
       ],
@@ -113,14 +114,11 @@ export class Entity {
     };
   }
 
-  static async create(userAddress: string, name: string) {
+  static async create(userAddress: string, name: string, safeAddress: string) {
     try {
       /** Create entity on chain using factory contract */
       const { entityAddress, url, streamId, encryptedKey } =
-        await Entity.createCommon(
-          name,
-          '0xCE02ab993338c9a977e6f93fcFdB0e39090E0Df2'
-        );
+        await Entity.createCommon(name, safeAddress);
       /** Add index in moralis for entity */
       return await Indexor.addIndex('EntityMapping', {
         entityAddress,

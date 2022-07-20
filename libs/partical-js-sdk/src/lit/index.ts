@@ -3,7 +3,7 @@ const LitJsSdk = require('lit-js-sdk');
 
 const client = new LitJsSdk.LitNodeClient();
 const standardContractType = 'ERC1155';
-const chain = 'rinkeby';
+const chain = 'polygon';
 
 export default class Lit {
   static litNodeClient: any;
@@ -17,6 +17,8 @@ export default class Lit {
   }
 
   static async checkAndSignAuthMessage(message: string): Promise<any> {
+    console.log({ message });
+
     this.authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(
       message
@@ -29,10 +31,10 @@ export default class Lit {
     entityAddress: string
   ): Promise<Uint8Array> {
     const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
-
-    const accessControlConditions = [
+    console.log({ authSig });
+    const evmContractConditions = [
       {
-        contractAddress: '0xCE02ab993338c9a977e6f93fcFdB0e39090E0Df2',
+        contractAddress: entityAddress,
         functionName: 'isOwner',
         functionParams: [':userAddress'],
         functionAbi: {
@@ -46,14 +48,15 @@ export default class Lit {
         },
         chain: 'polygon',
         returnValueTest: {
+          key: '',
           comparator: '=',
-          value: true,
+          value: 'true',
         },
       },
     ];
     console.log(encryptedSymmetricKey);
     const symmetricKey = await client.getEncryptionKey({
-      accessControlConditions,
+      evmContractConditions,
       toDecrypt: encryptedSymmetricKey,
       chain,
       authSig,
@@ -63,13 +66,13 @@ export default class Lit {
   }
 
   static async saveKey(
-    accessControlConditions: object[],
+    evmContractConditions: object[],
     symmetricKey: string
   ): Promise<string> {
     const authSig = this.authSig;
     console.log(this.litNodeClient);
     const encryptedSymmetricKey = await Lit.litNodeClient.saveEncryptionKey({
-      accessControlConditions,
+      evmContractConditions,
       symmetricKey,
       authSig,
       chain,
@@ -81,19 +84,19 @@ export default class Lit {
   // static async basicAccessControlConditions(
   //   entityAddress: string
   // ): Promise<object[]> {
-  //   return [
-  //     {
-  //       contractAddress: entityAddress,
-  //       standardContractType,
-  //       chain,
-  //       method: 'balanceOf',
-  //       parameters: [':userAddress', '0'],
-  //       returnValueTest: {
-  //         comparator: '>',
-  //         value: '0',
-  //       },
+  // return [
+  //   {
+  //     contractAddress: entityAddress,
+  //     standardContractType,
+  //     chain,
+  //     method: 'balanceOf',
+  //     parameters: [':userAddress', '0'],
+  //     returnValueTest: {
+  //       comparator: '>',
+  //       value: '0',
   //     },
-  //   ];
+  //   },
+  // ];
   // }
 
   // static async applicationAccessControlConditions(
