@@ -5,7 +5,7 @@ import KeyResolver from 'key-did-resolver';
 import { TileDocument, TileMetadataArgs } from '@ceramicnetwork/stream-tile';
 
 export class Ceramic {
-  static ceramicClient: any;
+  static ceramicClient: CeramicClient;
 
   static initialize(_ceramicClientUri?: string) {
     this.ceramicClient = new CeramicClient(_ceramicClientUri);

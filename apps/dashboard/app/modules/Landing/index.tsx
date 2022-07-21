@@ -81,7 +81,7 @@ export default function Landing() {
             center
             variant="tertiary"
           >
-            Create a new DAO
+            Import a new DAO
           </Button>
         </Stack>
       ) : (

@@ -59,14 +59,14 @@ export function CreateProfile() {
               </Stack>
             </Stack>
             <Input
-              label="Title"
+              label="DAO Name"
               placeholder="My Grant title"
               value={title}
               onChange={(e) => settitle(e.target.value)}
             />
             <Textarea
-              label="Description"
-              placeholder="Give a detailed description for your grant"
+              label="About DAO"
+              placeholder="Talk about your DAO"
               value={description}
               onChange={(e) => setdescription(e.target.value)}
             />

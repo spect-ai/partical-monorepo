@@ -27,7 +27,7 @@
         "development": {
           "buildTarget": "application-dashboard:build:development",
           "dev": true,
-          "port": 3000
+          "port": 3002
         },
         "production": {
           "buildTarget": "application-dashboard:build:production",
