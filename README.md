@@ -23,9 +23,11 @@ Recently in the Gitcoin Grants round 14, there was a lot of traffic coming on gi
 To solve this gitcoin can start hosting data on a decentralize databased. If gitcoin goes down there can be other frontends which serve the same data and users can use those other apps to donate. The Grant creator does not need to worry about writing the same grant in multiple places as all the apps share the same datastore, changing grant info on 1 app will automatically update others.
 
 ## Technologies Used
-- **Ceramic**: All the data is store on ceramic
-- **LIT Protocol**: Lit protocol is used to encrypt the seed generated to create the DID
-- **Gnosis**: Using gnosis polygon service to fectch multi sigs on polygon mainnet
+- **IPFS**: We use Moralis' IPFS api to store logos and images, and we use Ceramic which is another IPFS tool
+- **Ceramic**: All the data is stored on Ceramic, we have created easy to uses hooks for access to ceramic streams
+- **LIT Protocol**: Lit protocol is used to encrypt the seed generated to create the DID so that only addresses part of the multi sig can decrypt it
+- **Polygon**: Using gnosis multi sig contract deployed on *polygon mainnet*, gnosis polygon API service, we find DAOs deployed on polygon mainnet. We create a ceramic datastore for DAOs on *Polygon*.
+
 
 ## How it's Made
 Currently ceramic streams can only be controlled by 1 did. Hence ceramic is ideal for social media use cases where we need just an individual controlling their data. But what happens in case of DAOs, where not one person is responsible for the data. For that we used the concept of Key DIDs to create a DID for a DAO and to make this usable by only members of the DAO we encrypt the seed that generated the DID using LIT protocol such that only owners of the multi sig contract can decrypt it, hence only allowing them to update the stream.
