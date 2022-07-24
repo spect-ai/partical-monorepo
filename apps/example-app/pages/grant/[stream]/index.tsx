@@ -18,7 +18,7 @@ export function Stream() {
   const router = useRouter();
   const { stream } = router.query;
   const { streamData, loading, getData } = useStream<GrantData>({
-    appId: '5d3a207d-f4aa-4dc8-a43a-c8d7c4626ab1',
+    appId: 'd698907e-3c9d-496a-a586-83d834872639',
     streamId: stream as string,
     type: 'view',
   });

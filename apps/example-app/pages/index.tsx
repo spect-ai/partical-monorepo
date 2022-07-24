@@ -10,7 +10,7 @@ import { Layout, Loader } from '@partical/common';
 
 export function Index() {
   const { loading, getAppData, appData } = useAppData<GrantData>({
-    appId: '3beca601-c602-453e-827b-a24f0ccff978',
+    appId: '0be7a9c7-c6d2-44f3-8fed-1766ed3600fb',
   });
 
   const { isInitialized } = useMoralis();

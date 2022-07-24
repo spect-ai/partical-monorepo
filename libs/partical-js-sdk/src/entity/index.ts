@@ -98,19 +98,18 @@ export class Entity {
     console.log(`streamId: ${streamId}`);
 
     /** Update entity's on chain uri with new ipfs uri */
-    const url = await storeMetadata(
-      name,
-      LitJsSdk.uint8arrayToString(encryptedKey, 'base16'),
-      streamId
-    );
-    console.log({ url });
+    // const url = await storeMetadata(
+    //   name,
+    //   LitJsSdk.uint8arrayToString(encryptedKey, 'base16'),
+    //   streamId
+    // );
+    // console.log({ url });
 
     // /** Update entity's on chain uri with new ipfs uri */
     // await OnChainEntity.update(url);
     // console.log('On chain entity created');
     return {
       entityAddress,
-      url,
       streamId,
       encryptedKey,
     };
@@ -119,7 +118,7 @@ export class Entity {
   static async create(userAddress: string, name: string, safeAddress: string) {
     try {
       /** Create entity on chain using factory contract */
-      const { entityAddress, url, streamId, encryptedKey } =
+      const { entityAddress, streamId, encryptedKey } =
         await Entity.createCommon(name, safeAddress);
       /** Add index in moralis for entity */
       return await Indexor.addIndex('EntityMapping', {
@@ -130,7 +129,6 @@ export class Entity {
           'base16'
         ),
         streamId,
-        url,
         name,
       });
     } catch (e) {

@@ -17,9 +17,6 @@ import './styles.css';
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <Head>
-        <title>Gitcoin Example</title>
-      </Head>
       <MoralisProvider
         appId={process.env.NEXT_PUBLIC_MORALIS_APP_ID as string}
         serverUrl={process.env.NEXT_PUBLIC_MORALIS_SERVER_URL as string}

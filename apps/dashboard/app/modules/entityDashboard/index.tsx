@@ -58,14 +58,6 @@ export default function EntityDashboard() {
       <Stack>
         <Stack direction="horizontal">
           <Heading>Dashboard</Heading>
-          <Button
-            shape="circle"
-            size="small"
-            variant="tertiary"
-            onClick={() => {
-              console.log('test');
-            }}
-          ></Button>
           {access && <GiveAccess />}
         </Stack>
         <Box>

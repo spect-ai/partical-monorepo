@@ -60,7 +60,7 @@ export default function Landing() {
                   >
                     <Stack>
                       <Text weight="semiBold" size="extraLarge">
-                        Dao {index}
+                        {dao.name}
                       </Text>
                       <Text variant="label">{dao.get('entityAddress')}</Text>
                     </Stack>

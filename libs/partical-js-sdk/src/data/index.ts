@@ -84,7 +84,7 @@ export class Data {
   }
 
   // const dependencyResolver: Schema = {
-  //   '3beca601-c602-453e-827b-a24f0ccff978': [
+  //   '0be7a9c7-c6d2-44f3-8fed-1766ed3600fb': [
   //     {
   //       name: 'entityAddress',
   //       alias: 'entityAddress',
@@ -110,7 +110,7 @@ export class Data {
   //       alias: 'fundingAddress',
   //     },
   //   ],
-  //   '8482e8a6-52c2-4275-bb31-867b1ad49952': [
+  //   '8d81462f-816c-404c-9efa-51c6e2a80fa8': [
   //     {
   //       name: 'name',
   //       alias: 'daoName',

@@ -2,8 +2,8 @@ import Moralis from 'moralis';
 
 export class Indexor {
   static initialize() {
-    const serverUrl = 'https://e6ss72rsmosx.usemoralis.com:2053/server';
-    const appId = '6F5BP7sxHeCFc3yczy70u0xlF72oS9YQbOygTnoT';
+    const serverUrl = 'https://tplxoez2cprz.usemoralis.com:2053/server';
+    const appId = 'Tjg1d2ZIxWqBSKEfGGBAxh43JG2CzkFHlLTu6TJe';
 
     void Moralis.start({ serverUrl, appId });
   }
