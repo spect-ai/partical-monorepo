@@ -3,7 +3,7 @@ import { useMoralis } from 'react-moralis';
 import Grant from '../components/Grant';
 import { Container, Row, Col } from 'react-grid-system';
 import Link from 'next/link';
-import { useAppData } from '@partical/react-partical';
+import { useAppData } from '@partical/react-partical-old';
 import { useEffect } from 'react';
 import { GrantData } from './createGrant';
 import { Layout, Loader } from '@partical/common';

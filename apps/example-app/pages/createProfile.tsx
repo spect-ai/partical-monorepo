@@ -1,6 +1,6 @@
 import { Box, Button, Input, Stack, Tag, Text, Textarea } from 'degen';
 import styled from 'styled-components';
-import { useAppData, useEntity } from '@partical/react-partical';
+import { useAppData, useEntity } from '@partical/react-partical-old';
 import { useEffect, useState } from 'react';
 import { useMoralis } from 'react-moralis';
 import { Layout } from '@partical/common';

@@ -1,5 +1,5 @@
 import { Accordian } from '@partical/common';
-import { useNamespace } from '@partical/react-partical';
+import { useNamespace } from '@partical/react-partical-old';
 import { Box, Button, Heading, Stack, Tag, Text } from 'degen';
 import React, { useState } from 'react';
 import ReactJson from 'react-json-view';

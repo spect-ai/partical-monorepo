@@ -4,3 +4,4 @@ export * from './lib/loader';
 export * from './lib/table';
 export * from './lib/accordian';
 export * from './lib/dropdown';
+export * from './lib/select';

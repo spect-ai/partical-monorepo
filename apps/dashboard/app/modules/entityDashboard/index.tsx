@@ -1,6 +1,6 @@
 import { Box, Button, Heading, IconPencil, Stack, Text } from 'degen';
 import React, { useEffect, useState } from 'react';
-import { useAppData, useEntity } from '@partical/react-partical';
+import { useAppData, useEntity } from '@partical/react-partical-old';
 import GiveAccess from '../giveAccess';
 import { useRouter } from 'next/router';
 import { Accordian, Loader } from '@partical/common';
@@ -9,47 +9,36 @@ import DataRow from '../dataRow';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 // import StreamView from '../streamView';
 import dynamic from 'next/dynamic';
+import { useFilter, useSelect } from 'react-supabase';
+import { loadDocument } from '../../services/ceramic';
 
 const StreamView = dynamic(() => import('../streamView'), {
   ssr: false,
 });
 
 export default function EntityDashboard() {
-  const { getEntityData, hasAccess, loading } = useEntity();
   const router = useRouter();
   const { address } = router.query;
-  const [data, setData] = useState<{
-    [key: string]: {
-      appId: string;
-      name: string;
-      schemaName: string;
-      streams: any[];
-    };
-  }>({});
+  const filter = useFilter((query) => query.eq('entityAddress', address), []);
+  const [{ data: streams, fetching }, reexecute] = useSelect('Stream_Indexer', {
+    filter,
+  });
+  // console.log({ streams });
+  const [data, setData] = useState<any>({});
 
   const [access, setAccess] = useState(false);
-  const { user, isAuthenticated } = useMoralis();
-
-  const fetchData = async () => {
-    const res = await getEntityData(address as string);
-    setData(res);
-  };
 
   useEffect(() => {
-    fetchData();
-  }, [address]);
-
-  useEffect(() => {
-    const fetchAccess = async () => {
-      const res = await hasAccess(user.get('ethAddress'), address as string);
-      setAccess(res);
+    const loadStreamData = async () => {
+      console.log({ streams });
+      const streamData = await loadDocument(streams[0]?.streamId);
+      // console.log({ streamData });
+      setData(streamData);
     };
-    if (user) {
-      fetchAccess();
-    }
-  }, [address, isAuthenticated]);
+    if (streams && streams[0]) loadStreamData();
+  }, [streams]);
 
-  if (loading) {
+  if (fetching) {
     return <Loader loading text="Loading.." />;
   }
 
@@ -67,22 +56,23 @@ export default function EntityDashboard() {
               rows={formatRows(data)}
             />
           </Box> */}
-          {Object.keys(data).map((app) => {
-            return (
-              <Box key={data[app].appId}>
-                <Accordian
-                  name={<Heading>{data[app].name}</Heading>}
-                  defaultOpen
-                >
-                  <StreamView
-                    streams={data[app].streams}
-                    access={access}
-                    fetchData={fetchData}
-                  />
-                </Accordian>
-              </Box>
-            );
-          })}
+          {data &&
+            Object.keys(data).map((app) => {
+              return (
+                <Box key={data[app].appId}>
+                  <Accordian
+                    name={<Heading>{data[app].name}</Heading>}
+                    defaultOpen
+                  >
+                    <StreamView
+                      streams={[data]}
+                      access={true}
+                      fetchData={reexecute}
+                    />
+                  </Accordian>
+                </Box>
+              );
+            })}
         </Box>
       </Stack>
     </Box>

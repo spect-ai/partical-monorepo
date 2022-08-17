@@ -45,12 +45,14 @@ export class Ceramic {
 
   static async updateStream<T>(streamId: string, content: Partial<T>) {
     const doc = await TileDocument.load(this.ceramicClient, streamId);
+    console.log({ doc });
     const docContent = doc.content as T;
     try {
       await doc.update({
         ...docContent,
         ...content,
       });
+      console.log('updatedd!!!');
       return doc.content as T;
     } catch (e) {
       return undefined;

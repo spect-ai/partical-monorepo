@@ -1,5 +1,5 @@
 import { Accordian, Loader } from '@partical/common';
-import { useNamespace } from '@partical/react-partical';
+import { useNamespace } from '@partical/react-partical-old';
 import { Box, Heading, Stack, Text } from 'degen';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';

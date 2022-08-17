@@ -1,7 +1,7 @@
 import { ThemeProvider } from 'degen';
 import { AppProps } from 'next/app';
 import { MoralisProvider } from 'react-moralis';
-import { ParticalClientProvider } from '@partical/react-partical';
+import { ParticalClientProvider } from '@partical/react-partical-old';
 import 'degen/styles';
 
 import '@fontsource/inter/300.css';

@@ -30,7 +30,7 @@ export default function Layout({ children, header, footer }: Props) {
     >
       {header ? header : <Header />}
       <Container>{children}</Container>
-      {footer ? footer : <Footer />}
+      {/* {footer ? footer : <Footer />} */}
     </Box>
   );
 }

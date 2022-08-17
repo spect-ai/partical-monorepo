@@ -1,18 +1,29 @@
-import { ParticalClient } from '@partical/partical-js-sdk';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
+import {
+  configureChains,
+  createClient,
+  defaultChains,
+  WagmiConfig,
+} from 'wagmi';
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 interface ParticalContextType {
-  particalClient: ParticalClient;
-  setParticalClient: (particalClient: ParticalClient) => void;
+  particalHost: string;
+  setParticalHost: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const useParticalClientProvider = () => {
-  const [particalClient, setParticalClient] = useState<ParticalClient>(
-    {} as ParticalClient
-  );
+  const [particalHost, setParticalHost] = useState('');
+
   return {
-    particalClient,
-    setParticalClient,
+    particalHost,
+    setParticalHost,
   };
 };
 
@@ -32,26 +43,70 @@ export const useParticalClient = () => {
 
 export interface ParticalClientProviderProps {
   children: React.ReactNode;
-  ceramicClientUri?: string;
+  particalClientUri: string;
 }
 
 export function ParticalClientProvider({
   children,
-  ceramicClientUri,
+  particalClientUri,
 }: ParticalClientProviderProps) {
   const context = useParticalClientProvider();
 
   useEffect(() => {
     const initClients = async () => {
-      const client = new ParticalClient(ceramicClientUri);
-      context.setParticalClient(client);
+      context.setParticalHost(particalClientUri);
     };
     initClients();
   }, []);
 
+  const queryClient = new QueryClient();
+  const alchemyId = '_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC';
+
+  const { chains, provider, webSocketProvider } = configureChains(
+    defaultChains,
+    [
+      alchemyProvider({
+        apiKey: alchemyId,
+      }),
+      publicProvider(),
+    ]
+  );
+
+  const wagmiClient = createClient({
+    autoConnect: true,
+    connectors: [
+      new MetaMaskConnector({ chains }),
+      new CoinbaseWalletConnector({
+        chains,
+        options: {
+          appName: 'wagmi',
+        },
+      }),
+      new WalletConnectConnector({
+        chains,
+        options: {
+          qrcode: true,
+        },
+      }),
+      new InjectedConnector({
+        chains,
+        options: {
+          name: 'Injected',
+          shimDisconnect: true,
+        },
+      }),
+    ],
+    provider,
+    webSocketProvider,
+  });
+
   return (
-    <ParticalClientContext.Provider value={context}>
-      {children}
-    </ParticalClientContext.Provider>
+    <WagmiConfig client={wagmiClient}>
+      <QueryClientProvider client={queryClient}>
+        <ParticalClientContext.Provider value={context}>
+          {children}
+        </ParticalClientContext.Provider>
+      </QueryClientProvider>
+    </WagmiConfig>
   );
 }

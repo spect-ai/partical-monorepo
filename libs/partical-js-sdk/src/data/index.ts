@@ -68,6 +68,8 @@ export class Data {
     encryptedSymmetricKey: string
   ): Promise<T | undefined> {
     try {
+      await Ceramic.initialize('https://ceramic-clay.3boxlabs.com');
+      await Lit.connect();
       console.log({ encryptedSymmetricKey, entityAddress });
       const symmetricKey = await Lit.descryptKey(
         encryptedSymmetricKey,

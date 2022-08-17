@@ -9,7 +9,7 @@ import {
   Text,
 } from 'degen';
 import React, { useEffect, useState } from 'react';
-import { useSchema, useNamespace } from '@partical/react-partical';
+import { useSchema, useNamespace } from '@partical/react-partical-old';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Link from 'next/link';

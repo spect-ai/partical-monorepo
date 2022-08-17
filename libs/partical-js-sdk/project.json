@@ -4,13 +4,16 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/partical-js-sdk",
         "main": "libs/partical-js-sdk/src/index.ts",
+        "outputPath": "dist/libs/partical-js-sdk",
         "tsConfig": "libs/partical-js-sdk/tsconfig.lib.json",
-        "generatePackageJson": true
+        "project": "libs/partical-js-sdk/package.json",
+        "generatePackageJson": true,
+        "updateBuildableProjectDepsInPackageJson": true,
+        "buildableProjectDepsInPackageJsonType": "dependencies"
       }
     },
     "publish": {

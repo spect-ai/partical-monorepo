@@ -1,4 +1,4 @@
-import { useNamespace } from '@partical/react-partical';
+import { useNamespace } from '@partical/react-partical-old';
 import { Box, Heading, Stack } from 'degen';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';

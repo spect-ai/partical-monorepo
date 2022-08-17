@@ -1,5 +1,5 @@
 import { Loader, Modal } from '@partical/common';
-import { useEntity, useGnosis } from '@partical/react-partical';
+import { useEntity, useGnosis } from '@partical/react-partical-old';
 import { Box, Button, Input, Stack, Tag, Text } from 'degen';
 import { AnimatePresence } from 'framer-motion';
 import React, { useEffect, useState } from 'react';

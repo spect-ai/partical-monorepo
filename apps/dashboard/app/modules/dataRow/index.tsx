@@ -1,5 +1,5 @@
 import { Modal } from '@partical/common';
-import { useAppData } from '@partical/react-partical';
+import { useAppData } from '@partical/react-partical-old';
 import { Box, Button, IconPencil, Input, Stack, Text } from 'degen';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/router';

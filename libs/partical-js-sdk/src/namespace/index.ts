@@ -84,8 +84,10 @@ export class Namespace {
   }> {
     const key = generateKey();
     console.log({ key });
-    const { entityAddress, url, streamId, encryptedKey } =
-      await Entity.createCommon(appName, '');
+    const { entityAddress, streamId, encryptedKey } = await Entity.createCommon(
+      appName,
+      ''
+    );
     /** Update entity's on chain uri with new ipfs uri */
     const appId = uuidv4();
     console.log('On chain entity created');

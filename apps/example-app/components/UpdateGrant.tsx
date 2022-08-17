@@ -1,5 +1,5 @@
 import { Modal } from '@partical/common';
-import { useAppData, useStream } from '@partical/react-partical';
+import { useAppData, useStream } from '@partical/react-partical-old';
 import { Box, Button, Input, Stack, Textarea } from 'degen';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/router';

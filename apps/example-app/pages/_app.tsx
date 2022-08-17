@@ -1,4 +1,4 @@
-import { ParticalClientProvider } from '@partical/react-partical';
+import { ParticalClientProvider } from '@partical/react-partical-old';
 import { ThemeProvider } from 'degen';
 import { AppProps } from 'next/app';
 import Head from 'next/head';

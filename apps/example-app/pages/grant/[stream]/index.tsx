@@ -1,5 +1,5 @@
 import { Box, Heading, Stack, Text } from 'degen';
-import { useStream } from '@partical/react-partical';
+import { useStream } from '@partical/react-partical-old';
 import { useRouter } from 'next/router';
 import { GrantData } from '../../createGrant';
 import Link from 'next/link';

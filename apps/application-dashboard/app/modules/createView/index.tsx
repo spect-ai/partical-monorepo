@@ -1,4 +1,4 @@
-import { useNamespace } from '@partical/react-partical';
+import { useNamespace } from '@partical/react-partical-old';
 import {
   Box,
   Button,

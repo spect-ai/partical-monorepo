@@ -1,5 +1,5 @@
 import { Box, Button, Heading, IconPlus, Stack, Text } from 'degen';
-import { useEntity, useNamespace } from '@partical/react-partical';
+import { useEntity, useNamespace } from '@partical/react-partical-old';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useMoralis, useMoralisQuery } from 'react-moralis';

@@ -1,14 +1,9 @@
 import { EntityABI } from '../constants/abi';
-import { mintAccessToken } from '../utils/contract';
 import Moralis from 'moralis';
-import OnChainEntity from '../contract/OnChainEntity';
-import OnChainEntityFactory from '../contract/OnChainEntityFactory';
 import Lit from '../lit';
 import { Ceramic } from '../ceramic';
-import { storeMetadata } from '../utils';
 import { Indexor } from '../indexor';
 import { MoralisStream } from '../../types';
-import { Gnosis } from '../gnosis';
 import { ethers } from 'ethers';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const LitJsSdk = require('lit-js-sdk');
@@ -38,10 +33,6 @@ const evmContractConditions = [
   },
 ];
 export class Entity {
-  constructor() {
-    if (!OnChainEntityFactory.contract) OnChainEntityFactory.initContract();
-  }
-
   private static async _generateKeyAndAuthenticate(address: string) {
     console.log(`generateKeyAndAuthenticate...`);
     const { symmetricKey }: any = await Lit.checkAndSignAuthMessage('encrypt');
@@ -180,36 +171,5 @@ export class Entity {
 
     return entityData;
   }
-
-  static async giveAccess(entityAddress: string, userAddress: string) {
-    const res = await mintAccessToken(
-      entityAddress,
-      userAddress,
-      EntityABI.abi
-    );
-
-    const result = await Indexor.queryOneIndex('EntityMapping', {
-      entityAddress,
-    });
-    if (!result) {
-      throw new Error('Entity not found');
-    }
-
-    await Indexor.addIndex('EntityMapping', {
-      entityAddress,
-      userAddress: userAddress.toLowerCase(),
-      encryptedSymmetricKey: result.get('encryptedSymmetricKey'),
-      streamId: result.get('streamId'),
-      url: result.get('url'),
-    });
-    console.log({ res });
-
-    return res;
-  }
-
-  static async hasAccess(entityAddress: string, userAddress: string) {
-    if (!entityAddress) return;
-    const res = await Gnosis.getSafeInfo(entityAddress);
-    return res.owners.includes(ethers.utils.getAddress(userAddress));
-  }
+  
 }

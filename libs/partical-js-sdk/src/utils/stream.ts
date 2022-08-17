@@ -1,7 +1,7 @@
 // Import the client
 import { CeramicClient } from '@ceramicnetwork/http-client';
 import { TileDocument } from '@ceramicnetwork/stream-tile';
-import { DID } from 'dids';
+import { DID } from 'dids/lib/did';
 import { Ed25519Provider } from 'key-did-provider-ed25519';
 import KeyResolver from 'key-did-resolver';
 

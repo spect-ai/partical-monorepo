@@ -2,14 +2,13 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "app": "apps/app",
     "application-dashboard": "apps/application-dashboard",
-    "application-dashboard-e2e": "apps/application-dashboard-e2e",
     "common": "libs/common",
-    "contracts": "libs/contracts",
     "dashboard": "apps/dashboard",
-    "dashboard-e2e": "apps/dashboard-e2e",
     "example-app": "apps/example-app",
     "partical-js-sdk": "libs/partical-js-sdk",
-    "react-partical": "libs/react-partical"
+    "react-partical": "libs/react-partical",
+    "react-partical-old": "libs/react-partical-old"
   }
 }

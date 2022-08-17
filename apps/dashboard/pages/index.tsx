@@ -1,10 +1,17 @@
-import { Layout } from '@partical/common';
+import { Box } from 'degen';
 import Landing from '../app/modules/Landing';
 export function Index() {
   return (
-    <Layout>
-      <Landing />
-    </Layout>
+    <Box
+      backgroundColor="background"
+      style={{
+        height: '100vh',
+      }}
+    >
+      <Box paddingTop="32">
+        <Landing />
+      </Box>
+    </Box>
   );
 }
 

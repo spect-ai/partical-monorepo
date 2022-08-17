@@ -1,10 +1,12 @@
 import { TileDocument } from '@ceramicnetwork/stream-tile';
 import { Loader } from '@partical/common';
-import { useAppData } from '@partical/react-partical';
+import { Data } from '@partical/partical-js-sdk';
+import { useAppData } from '@partical/react-partical-old';
 import { Box } from 'degen';
 import { useRouter } from 'next/router';
 import React from 'react';
 import ReactJson, { InteractionProps } from 'react-json-view';
+import { useFilter, useSelect } from 'react-supabase';
 
 type Props = {
   streams: TileDocument[];
@@ -14,11 +16,21 @@ type Props = {
 
 export default function StreamView({ streams, access, fetchData }: Props) {
   const { updateAppData, loading } = useAppData({ appId: '' });
+  const filter = useFilter((query) => query.eq('entityAddress', address), []);
+  const [{ data: entity, fetching }, reexecute] = useSelect('Entity_Indexer', {
+    filter,
+  });
+  console.log({ entity });
   const router = useRouter();
   const { address } = router.query;
   const onEdit = async (e: InteractionProps, streamId: string) => {
-    console.log({ e, streamId });
-    await updateAppData(streamId, e.updated_src, address as string);
+    const res = await Data.updateData(
+      streamId,
+      e.updated_src,
+      address as string,
+      entity[0].encryptedSymmetricKey
+    );
+    console.log({ res });
     await fetchData();
   };
 
