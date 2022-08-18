@@ -166,8 +166,11 @@ export default function CreateSchema({ serverURL, fetchSchema }: props) {
                         console.log('done');
                         const data = await res.json();
                         console.log({ data });
-                        fetchSchema();
+                        // fetchSchema();
                         setIsOpen(false);
+                        // reset form
+                        setName('');
+                        setColumns(defaultColumns);
                       }
                       setLoading(false);
                     }}

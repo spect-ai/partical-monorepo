@@ -71,13 +71,15 @@ export default function AppCard({ id, name, serverId, serverURL }: Props) {
               variant="tertiary"
               size="small"
               loading={loading}
-              onClick={async () => {
+              onClick={async (e) => {
+                e.stopPropagation();
                 // console.log(`https://particaltest7.partical.xyz/user/nonce`);
-                const nonceRes = await fetch(`${serverURL}/user/nonce`, {
-                  credentials: 'include',
-                });
-                const nonce = await nonceRes.text();
-                // const nonce = 'aaaa';
+                // const nonceRes = await fetch(`${serverURL}/user/nonce`, {
+                //   credentials: 'include',
+                // });
+                // const nonce = await nonceRes.text();
+                // // const nonce = 'aaaa';
+                const nonce = 'DlqhxbSaLpOvvoiB7';
                 console.log({ nonce });
                 const message = new SiweMessage({
                   domain: window.location.host,
@@ -99,21 +101,21 @@ export default function AppCard({ id, name, serverId, serverURL }: Props) {
                   })
                 );
 
-                const verifyRes = await fetch(`${serverURL}/user/login`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  credentials: 'include',
-                  body: JSON.stringify({
-                    message,
-                    signature,
-                    signedMessage: message.prepareMessage(),
-                  }),
-                });
-                if (!verifyRes.ok) throw new Error('Error verifying message');
-                else console.log('Verified message');
-                setisAuth(true);
+                // const verifyRes = await fetch(`${serverURL}/user/login`, {
+                //   method: 'POST',
+                //   headers: {
+                //     'Content-Type': 'application/json',
+                //   },
+                //   credentials: 'include',
+                //   body: JSON.stringify({
+                //     message,
+                //     signature,
+                //     signedMessage: message.prepareMessage(),
+                //   }),
+                // });
+                // if (!verifyRes.ok) throw new Error('Error verifying message');
+                // else console.log('Verified message');
+                // setisAuth(true);
               }}
             >
               Login

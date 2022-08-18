@@ -54,7 +54,7 @@ export function ServerPage() {
 
   useEffect(() => {
     const mySubscription = supabase
-      .from(`Custom_Indexer:appId=eq.${serverId}`)
+      .from(`Custom_Indexer`)
       .on('UPDATE', (payload) => {
         console.log({ payload });
         setIsDeploying(payload.new.isDeploying);
@@ -76,6 +76,10 @@ export function ServerPage() {
       <Box padding="8">
         <Stack space="8">
           <Stack>
+            <Stack direction="horizontal">
+              <Text variant="label">Server Url</Text>
+              <Text>{`https://shared.partical.xyz/server${serverId}`}</Text>
+            </Stack>
             <Heading>Schemas</Heading>
             <Stack space="2">
               {schemas?.map((schema) => (
